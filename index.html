@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FOKUS Emlak - Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı.">
+    <meta name="keywords" content="emlak, gayrimenkul, Kocaeli, Samsun, yapay zeka, AI değerleme">
+    <meta name="author" content="FOKUS Emlak">
+
+    <title>FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı</title>
+
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Google Sign-In SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen relative pt-8">
+
+    <!-- MARKET TICKER -->
+    <div class="fixed top-0 w-full z-[60] bg-slate-900 text-white text-xs py-2 border-b border-slate-700">
+        <div class="container mx-auto flex items-center">
+            <div class="font-bold bg-amber-500 text-slate-900 px-3 py-0.5 rounded mr-4 z-10 text-[10px] md:text-xs shrink-0">CANLI PİYASA</div>
+            <div class="ticker-wrap w-full">
+                <div class="ticker-content space-x-8">
+                    <span><i class="fa-solid fa-arrow-up text-green-400"></i> Kocaeli Ort. m²: 28.500 TL (%1.2)</span>
+                    <span><i class="fa-solid fa-arrow-down text-red-400"></i> Samsun Ort. m²: 22.100 TL (-%0.4)</span>
+                    <span><i class="fa-solid fa-arrow-up text-green-400"></i> İzmit Kira Çarpanı: 188 Ay</span>
+                    <span><i class="fa-solid fa-arrow-up text-green-400"></i> Atakum Konut Endeksi: 4.250 Puan</span>
+                    <span><i class="fa-solid fa-minus text-gray-400"></i> Konut Kredisi Faiz (Ort): %3.05</span>
+                    <span><i class="fa-solid fa-arrow-up text-green-400"></i> Kocaeli Ort. m²: 28.500 TL (%1.2)</span>
+                    <span><i class="fa-solid fa-arrow-down text-red-400"></i> Samsun Ort. m²: 22.100 TL (-%0.4)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-24 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-50 transition-all duration-300 glass-effect border-b border-gray-200 mt-0" id="navbar">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="flex items-center gap-2 cursor-pointer group">
+                    <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:bg-amber-500 transition-colors">F</div>
+                    <span class="text-2xl font-bold text-blue-900 tracking-tight">FOKUS<span class="text-amber-500">.</span></span>
+                </a>
+
+                <div class="hidden lg:flex items-center gap-5 font-medium text-sm text-slate-600">
+                    <a href="index.html" class="hover:text-blue-900 transition">Anasayfa</a>
+                    <a href="#ai-tools" class="hover:text-blue-900 transition text-blue-600 font-semibold"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Değerleme</a>
+                    <a href="#data-center" class="hover:text-blue-900 transition">Veri Merkezi</a>
+                    <a href="listings.html" class="hover:text-blue-900 transition">Portföy</a>
+                    <a href="sell-property.html" class="hover:text-blue-900 transition font-bold text-amber-600">Sat/Kirala</a>
+                </div>
+
+                <div class="hidden lg:flex items-center gap-3">
+                    <a href="login.html" data-auth="login-btn" class="flex items-center gap-2 border border-slate-300 px-4 py-2 rounded-full hover:bg-slate-50 transition text-sm font-medium">
+                        <i class="fa-solid fa-user"></i> Giriş Yap
+                    </a>
+
+                    <div data-auth="user-menu" class="hidden flex items-center gap-3">
+                        <a href="dashboard.html" class="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-slate-100 transition text-sm font-medium">
+                            <img data-auth="user-avatar" src="" alt="User" class="w-6 h-6 rounded-full">
+                            <span data-auth="user-name"></span>
+                        </a>
+                        <button data-auth="logout-btn" class="text-slate-600 hover:text-red-600 transition text-sm">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </button>
+                    </div>
+
+                    <button onclick="openModal('tracker-modal')" class="bg-blue-100 text-blue-900 px-4 py-2 rounded-full hover:bg-blue-200 transition text-sm font-medium">
+                        <i class="fa-solid fa-route"></i> Yol Arkadaşım
+                    </button>
+                    <a href="#footer" class="bg-blue-900 hover:bg-blue-800 text-white w-10 h-10 flex items-center justify-center rounded-full shadow-lg transition">
+                        <i class="fa-solid fa-headset"></i>
+                    </a>
+                </div>
+
+                <button class="lg:hidden text-2xl text-slate-700" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden fixed inset-0 bg-white z-40 pt-24 px-6">
+            <div class="flex flex-col gap-6 text-center text-lg font-medium text-slate-800">
+                <a href="index.html" onclick="toggleMobileMenu()" class="border-b pb-2">Anasayfa</a>
+                <a href="#ai-tools" onclick="toggleMobileMenu()" class="border-b pb-2 text-blue-600">Evim Ne Kadar Eder?</a>
+                <a href="#data-center" onclick="toggleMobileMenu()" class="border-b pb-2">Piyasa Analizi</a>
+                <a href="listings.html" onclick="toggleMobileMenu()" class="border-b pb-2">Portföy</a>
+                <a href="sell-property.html" onclick="toggleMobileMenu()" class="border-b pb-2 text-amber-600 font-bold">Mülkünü Sat/Kirala</a>
+                <a href="login.html" class="flex items-center justify-center gap-2 border py-3 rounded-lg w-full">
+                    <i class="fa-solid fa-user"></i> Giriş Yap
+                </a>
+                <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-3xl text-slate-400"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="relative min-h-[900px] hero-gradient flex flex-col items-center justify-center pt-24 pb-12">
+        <div class="container mx-auto px-4 text-center text-white relative z-10">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-2xl fade-in">
+                Yeni Nesil <br>
+                <span class="text-amber-500">Emlak Danışmanlığı.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto drop-shadow-md">
+                Yapay zeka destekli analizlerle en doğru gayrimenkulü sizin için buluyoruz.
+            </p>
+
+            <!-- SEARCH FORM -->
+            <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-6xl mx-auto transform text-slate-800 border-4 border-white/20 mb-8">
+                <form id="searchForm" onsubmit="handleSearch(event)">
+
+                    <div class="relative mb-6">
+                        <input type="text" id="voice-input" placeholder="Hızlı Arama: 'İzmit Yahyakaptan'da 3+1 satılık daire'..." class="w-full pl-12 pr-14 py-4 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-1 focus:ring-blue-900 text-lg shadow-inner outline-none">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xl"></i>
+                        <button type="button" onclick="startVoiceSearch()" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-blue-100 hover:bg-blue-200 text-blue-900 rounded-lg flex items-center justify-center transition" title="Sesli Arama">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 text-left">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">İşlem</label>
+                            <div class="relative">
+                                <select id="search_operation" class="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 appearance-none outline-none form-select">
+                                    <option value="Satılık">Satılık</option>
+                                    <option value="Kiralık">Kiralık</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Tür</label>
+                            <div class="relative">
+                                <select id="search_type" class="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 appearance-none outline-none form-select">
+                                    <option value="Konut">Konut</option>
+                                    <option value="Ticari">Ticari</option>
+                                    <option value="Arsa/Arazi">Arsa/Arazi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">İl</label>
+                            <div class="relative">
+                                <select id="search_city" onchange="loadDistricts('search')" class="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 appearance-none outline-none form-select">
+                                    <option value="">Seçiniz</option>
+                                    <option value="Kocaeli">Kocaeli</option>
+                                    <option value="Samsun">Samsun</option>
+                                    <option value="Sakarya">Sakarya</option>
+                                    <option value="Ordu">Ordu</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">İlçe</label>
+                            <div class="relative">
+                                <select id="search_district" onchange="loadNeighborhoods('search')" disabled class="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 disabled:bg-slate-100 disabled:text-slate-400 appearance-none outline-none form-select">
+                                    <option value="">Önce İl Seçiniz</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end text-left">
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Mahalle</label>
+                            <div class="relative">
+                                <select id="search_neighborhood" disabled class="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 disabled:bg-slate-100 disabled:text-slate-400 appearance-none outline-none form-select">
+                                    <option value="">Önce İlçe Seçiniz</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Oda Sayısı</label>
+                            <div class="relative">
+                                <select id="search_rooms" class="w-full px-4 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 appearance-none outline-none form-select">
+                                    <option value="Farketmez">Farketmez</option>
+                                    <option value="1+0">1+0</option>
+                                    <option value="1+1">1+1</option>
+                                    <option value="2+1">2+1</option>
+                                    <option value="3+1">3+1</option>
+                                    <option value="4+1">4+1</option>
+                                    <option value="5+1">5+1</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <div class="w-1/2">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Min TL</label>
+                                <input type="number" id="price_min" placeholder="Min" class="w-full px-3 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 text-sm outline-none form-input">
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-xs font-bold text-slate-500 uppercase ml-1 mb-1 block">Max TL</label>
+                                <input type="number" id="price_max" placeholder="Max" class="w-full px-3 py-3 bg-slate-50 rounded-xl border border-slate-200 focus:border-blue-900 focus:ring-0 text-sm outline-none form-input">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="searchBtn" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-900/30 flex items-center justify-center gap-2 h-[50px] btn-primary">
+                            <i class="fa-solid fa-filter"></i> Filtrele & Bul
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- DECISION SUPPORT SYSTEM -->
+            <div class="max-w-5xl mx-auto mt-8">
+                <div class="flex flex-col items-center">
+                    <div class="inline-block bg-white/10 backdrop-blur border border-white/20 rounded-full px-6 py-2 text-sm mb-4 text-white font-semibold">
+                        <i class="fa-solid fa-brain text-amber-400 mr-2"></i> Karar Destek Sistemi
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="window.location.href='listings.html?filter=trending'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-green-50 hover:text-green-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
+                            <div class="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                            En Hızlı Değerlenenler
+                        </button>
+                        <button onclick="window.location.href='listings.html?filter=roi'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-blue-50 hover:text-blue-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
+                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-piggy-bank"></i></div>
+                            Yüksek Kira Getirisi
+                        </button>
+                        <button onclick="window.location.href='listings.html?filter=student'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-amber-50 hover:text-amber-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
+                            <div class="w-8 h-8 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-school"></i></div>
+                            Öğrenci Dostu
+                        </button>
+                         <button onclick="window.location.href='listings.html?filter=earthquake-safe'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-purple-50 hover:text-purple-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
+                            <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-shield-halved"></i></div>
+                            Deprem Riski Düşük
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI TOOLS SECTION -->
+    <section id="ai-tools" class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Yapay Zeka Araçları</h2>
+                <p class="text-slate-500">Teknoloji ile gayrimenkulünüze değer katın.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Evim Ne Kadar Eder? -->
+                <div class="bg-slate-50 p-8 rounded-3xl border border-slate-200 shadow-lg relative overflow-hidden group hover-lift">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full -mr-16 -mt-16 transition group-hover:bg-blue-200"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-blue-600/30">
+                            <i class="fa-solid fa-calculator"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900 mb-2">Evim Ne Kadar Eder?</h3>
+                        <p class="text-slate-600 mb-6">Yapay zekamız bölge verilerini analiz ederek mülkünüz için tahmini bir fiyat aralığı sunar.</p>
+
+                        <form onsubmit="handleValuation(event)" class="space-y-4">
+                            <input type="text" placeholder="Adres / Mahalle" class="form-input" required>
+                            <div class="grid grid-cols-2 gap-4">
+                                <input type="number" placeholder="m² (Brüt)" class="form-input" required>
+                                <input type="number" placeholder="Bina Yaşı" class="form-input" required>
+                            </div>
+                            <button type="submit" class="w-full bg-slate-900 text-white font-bold py-3 rounded-lg hover:bg-slate-800 transition flex justify-center items-center gap-2">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> AI ile Hesapla
+                            </button>
+                        </form>
+                        <div id="valuation-result" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- Sanal Tadilat -->
+                <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-lg text-white relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <div class="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-slate-900 text-xl mb-4 shadow-lg shadow-amber-500/30">
+                                    <i class="fa-solid fa-paint-roller"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2">Sanal Tadilat</h3>
+                                <p class="text-slate-400 text-sm">Eski evlerin potansiyelini AI ile görün.</p>
+                            </div>
+                            <span class="bg-white/10 px-3 py-1 rounded text-xs font-bold border border-white/20">ÖNCE / SONRA</span>
+                        </div>
+
+                        <div class="comparison-slider" id="comp-slider">
+                            <div class="comparison-item" style="background-image: url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                            <div class="comparison-item comparison-overlay" id="comp-overlay" style="background-image: url('https://images.unsplash.com/photo-1584622050111-993a426fbf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); filter: grayscale(100%) brightness(0.8);"></div>
+                            <input type="range" min="0" max="100" value="50" class="comparison-range" oninput="updateSlider(this.value)">
+                            <div class="slider-handle" id="comp-handle">
+                                <i class="fa-solid fa-arrows-left-right text-slate-600"></i>
+                            </div>
+                        </div>
+                        <p class="text-center text-xs text-slate-500 mt-3">Kaydırıcıyı sağa/sola çekerek değişimi görün.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DATA CENTER SECTION -->
+    <section id="data-center" class="py-24 bg-slate-50 border-y border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Veri Merkezi & Analiz</h2>
+                <p class="text-slate-500">Kocaeli ve Samsun piyasasının nabzını tutun.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="col-span-1 md:col-span-2 bg-white rounded-2xl shadow-md p-6 border border-slate-100 hover-lift">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-lg"><i class="fa-solid fa-map text-blue-600 mr-2"></i> Bölgesel Isı Haritası</h3>
+                        <select class="text-xs bg-slate-100 p-2 rounded form-select"><option>Son 1 Yıl</option><option>Son 5 Yıl</option></select>
+                    </div>
+                    <div class="relative w-full h-80 rounded-xl overflow-hidden bg-slate-100 group">
+                        <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" class="w-full h-full object-cover opacity-60">
+                        <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-red-500 rounded-full mix-blend-multiply filter blur-2xl opacity-60 animate-pulse"></div>
+                        <div class="absolute bottom-1/3 right-1/3 w-24 h-24 bg-amber-500 rounded-full mix-blend-multiply filter blur-2xl opacity-60"></div>
+                        <div class="absolute top-1/2 right-1/4 w-20 h-20 bg-green-500 rounded-full mix-blend-multiply filter blur-2xl opacity-60"></div>
+
+                        <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-4 py-2 rounded-lg text-xs shadow-lg">
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-red-500 rounded-full"></span> Yüksek Artış (>%80)</div>
+                            <div class="flex items-center gap-2"><span class="w-3 h-3 bg-amber-500 rounded-full"></span> Orta Artış (%50-80)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-900 text-white rounded-2xl shadow-md p-8 flex flex-col justify-center hover-lift">
+                    <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-envelope-open-text text-2xl"></i>
+                    </div>
+                    <h3 class="font-bold text-2xl mb-2">Otomatik Pazar Raporu</h3>
+                    <p class="text-blue-200 mb-6 text-sm">Her ayın 1'inde ilgilendiğiniz bölgedeki fiyat değişimlerini e-posta ile alın.</p>
+                    <form onsubmit="event.preventDefault(); API.subscribeNewsletter(this.email.value, {city: this.city.value}).then(() => showToast('Bültene başarıyla abone oldunuz!', 'success')).catch(() => showToast('Bir hata oluştu', 'error'));" class="space-y-3">
+                        <input type="email" name="email" placeholder="E-posta Adresiniz" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-blue-300 focus:outline-none focus:bg-white/20" required>
+                        <select name="city" class="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:bg-white/20 text-sm form-select">
+                            <option class="text-slate-900" value="Kocaeli">Kocaeli - Tümü</option>
+                            <option class="text-slate-900" value="Samsun">Samsun - Tümü</option>
+                        </select>
+                        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-blue-900 font-bold py-3 rounded-lg transition btn-secondary">Abone Ol</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUCCESS STORIES -->
+    <section class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Mutlu Müşteriler, <br>Güvenli Tapular.</h2>
+                    <p class="text-slate-600 mb-8">Son 30 günde FOKUS teknolojisi ile sonuçlanan işlemlerden bazıları.</p>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition hover-lift">
+                            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="w-16 h-16 rounded-lg object-cover">
+                            <div>
+                                <h4 class="font-bold text-slate-800">İzmit Merkez 3+1 Daire</h4>
+                                <p class="text-xs text-slate-500">Satış Süresi: <span class="text-green-600 font-bold">14 Gün</span> | Değer: 3.8M ₺</p>
+                            </div>
+                            <div class="ml-auto text-green-500"><i class="fa-solid fa-circle-check text-2xl"></i></div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition hover-lift">
+                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="w-16 h-16 rounded-lg object-cover">
+                            <div>
+                                <h4 class="font-bold text-slate-800">Atakum Full Eşyalı 1+1</h4>
+                                <p class="text-xs text-slate-500">Kiralanma: <span class="text-green-600 font-bold">3 Gün</span> | Kira: 15.000 ₺</p>
+                            </div>
+                            <div class="ml-auto text-green-500"><i class="fa-solid fa-circle-check text-2xl"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yol Arkadaşım Preview -->
+                <div class="bg-gradient-to-br from-blue-900 to-slate-900 p-8 rounded-3xl text-white shadow-2xl relative overflow-hidden hover-lift">
+                    <div class="absolute top-0 right-0 p-8 opacity-10"><i class="fa-solid fa-route text-9xl"></i></div>
+                    <h3 class="text-2xl font-bold mb-4">Yol Arkadaşım <span class="text-amber-400 text-sm font-normal ml-2">Beta</span></h3>
+                    <p class="text-blue-200 mb-8 text-sm">İşlem süreciniz nerede? Şeffaf takip sistemi ile adım adım izleyin.</p>
+
+                    <div class="space-y-6 relative z-10">
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-check"></i></div>
+                                <div class="w-0.5 h-full bg-green-500 my-1"></div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-sm">Kaparo Alındı</h5>
+                                <p class="text-xs text-blue-200">12.11.2025 - 14:30</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-check"></i></div>
+                                <div class="w-0.5 h-full bg-slate-600 my-1"></div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-sm">Eksper Raporu</h5>
+                                <p class="text-xs text-blue-200">14.11.2025 - Tamamlandı</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-xs font-bold animate-pulse"><i class="fa-solid fa-spinner fa-spin"></i></div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-sm text-amber-400">Kredi Onayı Bekleniyor</h5>
+                                <p class="text-xs text-blue-200">Banka süreci devam ediyor...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="openModal('tracker-modal')" class="mt-8 w-full bg-white/10 hover:bg-white/20 border border-white/20 py-3 rounded-lg transition font-semibold text-sm">
+                        Kendi Sürecimi Sorgula
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LISTINGS SECTION -->
+    <section id="listings" class="py-24 bg-slate-50 overflow-hidden">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Vitrin</h2>
+                    <p class="text-slate-500">Portföyümüzden seçmeler.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="scrollListings('left')" class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-blue-900 hover:text-white transition bg-white"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button onclick="scrollListings('right')" class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-blue-900 hover:text-white transition bg-white"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="listing-container" class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x p-2">
+                <!-- Property Card 1 -->
+                <div class="min-w-[300px] md:min-w-[350px] bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 group cursor-pointer snap-start border border-slate-100 property-card">
+                    <div class="relative overflow-hidden h-60 rounded-t-2xl">
+                        <span class="absolute top-4 left-4 bg-blue-900 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-md">SATILIK</span>
+                        <img src="https://images.unsplash.com/photo-1600596542815-2495db98dada?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Property">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900/80 to-transparent p-4">
+                            <p class="text-white font-bold text-lg">₺ 3.750.000</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2 text-lg truncate">Yahyakaptan'da Site İçi Lüks Daire</h4>
+                        <p class="text-slate-500 text-sm mb-4 flex items-center gap-1"><i class="fa-solid fa-location-dot text-blue-900"></i> İzmit, Kocaeli</p>
+                        <div class="flex justify-between border-t pt-4 text-sm text-slate-600 font-medium">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-bed text-slate-400"></i> 3+1</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-ruler-combined text-slate-400"></i> 145 m²</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-layer-group text-slate-400"></i> 3. Kat</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property Card 2 -->
+                <div class="min-w-[300px] md:min-w-[350px] bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 group cursor-pointer snap-start border border-slate-100 property-card">
+                    <div class="relative overflow-hidden h-60 rounded-t-2xl">
+                        <span class="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-md">KİRALIK</span>
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Property">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900/80 to-transparent p-4">
+                            <p class="text-white font-bold text-lg">₺ 22.000 <span class="text-sm font-normal">/ Ay</span></p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2 text-lg truncate">Atakum Sahil Bandında Eşyalı</h4>
+                        <p class="text-slate-500 text-sm mb-4 flex items-center gap-1"><i class="fa-solid fa-location-dot text-blue-900"></i> Atakum, Samsun</p>
+                        <div class="flex justify-between border-t pt-4 text-sm text-slate-600 font-medium">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-bed text-slate-400"></i> 2+1</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-ruler-combined text-slate-400"></i> 100 m²</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-couch text-slate-400"></i> Eşyalı</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property Card 3 -->
+                <div class="min-w-[300px] md:min-w-[350px] bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 group cursor-pointer snap-start border border-slate-100 property-card">
+                    <div class="relative overflow-hidden h-60 rounded-t-2xl">
+                        <span class="absolute top-4 left-4 bg-blue-900 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow-md">SATILIK</span>
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover" alt="Property">
+                        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900/80 to-transparent p-4">
+                            <p class="text-white font-bold text-lg">₺ 18.500.000</p>
+                        </div>
+                    </div>
+                    <div class="p-5">
+                        <h4 class="font-bold text-slate-800 mb-2 text-lg truncate">GOSB Yakını Ticari Depo/Ofis</h4>
+                        <p class="text-slate-500 text-sm mb-4 flex items-center gap-1"><i class="fa-solid fa-location-dot text-blue-900"></i> Gebze, Kocaeli</p>
+                        <div class="flex justify-between border-t pt-4 text-sm text-slate-600 font-medium">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-briefcase text-slate-400"></i> Ticari</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-ruler-combined text-slate-400"></i> 450 m²</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-truck-ramp-box text-slate-400"></i> Yükleme</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <a href="listings.html" class="inline-block bg-blue-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-800 transition shadow-lg">
+                    Tüm İlanları Gör <i class="fa-solid fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEAD GENERATION SECTION -->
+    <section id="find-me" class="py-20 bg-blue-900 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-blue-800 skew-x-12 transform translate-x-40 hidden lg:block"></div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="inline-block bg-amber-500 text-blue-900 text-xs font-bold px-3 py-1 rounded-full mb-4">AI DESTEKLİ ASİSTAN</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6">Siz Hayal Edin, <br> <span class="text-amber-400">FOKUS Size Bulup Getirsin.</span></h2>
+                    <p class="text-blue-100 text-lg mb-8 leading-relaxed">
+                        İlan sitelerinde kaybolmayın. Aradığınız mülkün özelliklerini sisteme girin, yapay zeka algoritmamız portföyümüzü ve piyasayı tarayarak size en uygun seçenekleri sunsun.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 bg-blue-800/50 rounded-lg border border-blue-700">
+                            <div class="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-blue-900 font-bold"><i class="fa-solid fa-chart-line"></i></div>
+                            <div>
+                                <h4 class="font-bold">Anında Piyasa Analizi</h4>
+                                <p class="text-sm text-blue-200">Bölge ortalamaları ve amortisman süreleri.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-blue-800/50 rounded-lg border border-blue-700">
+                            <div class="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-blue-900 font-bold"><i class="fa-solid fa-bell"></i></div>
+                            <div>
+                                <h4 class="font-bold">Fırsat İlan Bildirimleri</h4>
+                                <p class="text-sm text-blue-200">Kriterinize uyan ilan düştüğünde SMS/Email alın.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lead Form -->
+                <div class="bg-white rounded-2xl p-8 shadow-2xl text-slate-800 border-4 border-blue-800/30">
+                    <h3 class="text-2xl font-bold mb-2 text-blue-900">Talep Oluştur</h3>
+                    <p class="text-slate-500 text-sm mb-6">Formu doldurun, danışmanımız 15 dk içinde size dönsün.</p>
+
+                    <form id="leadForm" onsubmit="handleLeadSubmit(event)" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">İşlem</label>
+                                <select id="lead_operation" class="form-input form-select">
+                                    <option>Satılık</option>
+                                    <option>Kiralık</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Tip</label>
+                                <select id="lead_type" class="form-input form-select">
+                                    <option>Konut</option>
+                                    <option>Ticari</option>
+                                    <option>Arsa</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">İl</label>
+                                <select id="lead_city" onchange="loadDistricts('lead')" class="form-input form-select">
+                                    <option value="">Seçiniz</option>
+                                    <option value="Kocaeli">Kocaeli</option>
+                                    <option value="Samsun">Samsun</option>
+                                    <option value="Sakarya">Sakarya</option>
+                                    <option value="Ordu">Ordu</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">İlçe</label>
+                                <select id="lead_district" disabled class="form-input form-select">
+                                    <option value="">Önce İl</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Bütçe (Max)</label>
+                                <input type="number" id="lead_budget" placeholder="TL" class="form-input">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Oda</label>
+                                <select id="lead_rooms" class="form-input form-select">
+                                    <option>Farketmez</option>
+                                    <option>2+1</option>
+                                    <option>3+1</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">İletişim (Tel)</label>
+                            <input type="tel" id="lead_phone" required placeholder="05XX XXX XX XX" class="form-input">
+                        </div>
+                        <button type="submit" id="leadBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-lg transition shadow-lg mt-2 flex items-center justify-center gap-2 btn-secondary">
+                            Talep Gönder <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOG SECTION -->
+    <section id="blog" class="py-24 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">Güncel Haberler & Analizler</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Emlak piyasasındaki son gelişmeler, Kocaeli ve Samsun bölge raporları ve yatırım tavsiyeleri.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <article class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl transition duration-300 group hover-lift">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover">
+                        <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded">12 Kasım 2024</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-blue-900 transition">Kocaeli Konut Piyasası 2025 Öngörüleri</h3>
+                        <p class="text-slate-600 text-sm mb-4 line-clamp-3">Yükselen faiz oranları ve inşaat maliyetleri Kocaeli emlak piyasasını nasıl etkileyecek?</p>
+                        <a href="blog-detail.html?slug=kocaeli-2025" class="text-blue-900 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <article class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl transition duration-300 group hover-lift">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover">
+                        <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded">05 Kasım 2024</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-blue-900 transition">Yatırımcılar İçin Samsun Rehberi</h3>
+                        <p class="text-slate-600 text-sm mb-4 line-clamp-3">Atakum mu İlkadım mı? Yatırım geri dönüş süresi (ROI) en kısa olan bölgeler.</p>
+                        <a href="blog-detail.html?slug=samsun-yatirim" class="text-blue-900 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <article class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl transition duration-300 group hover-lift">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover">
+                        <span class="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded">28 Ekim 2024</span>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3 group-hover:text-blue-900 transition">Konut Kredisinde Yeni Dönem</h3>
+                        <p class="text-slate-600 text-sm mb-4 line-clamp-3">BDDK'nın son düzenlemeleri ikinci evini alacakları nasıl etkiliyor?</p>
+                        <a href="blog-detail.html?slug=konut-kredisi" class="text-blue-900 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">Devamını Oku <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+            <div class="text-center mt-10">
+                <a href="blog.html" class="inline-block bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition">
+                    Tüm Yazılar <i class="fa-solid fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="py-24 bg-slate-50 border-t border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center gap-16">
+                <div class="md:w-1/2">
+                    <div class="relative">
+                        <div class="absolute -top-4 -left-4 w-24 h-24 bg-amber-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+                        <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Meeting" class="relative rounded-3xl shadow-2xl z-10">
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <div class="inline-block bg-blue-100 text-blue-900 font-bold px-3 py-1 rounded-full text-sm mb-4">BİZ KİMİZ?</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-6">Teknoloji ve Güvenin Buluşma Noktası</h2>
+                    <p class="text-slate-600 text-lg leading-relaxed mb-6">
+                        FOKUS, geleneksel emlakçılık anlayışını yapay zeka teknolojileri ile birleştiren yeni nesil bir gayrimenkul danışmanlık şirketidir.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-slate-700"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i> <span class="font-medium">Bölgesel Uzmanlık (Kocaeli & Samsun)</span></li>
+                        <li class="flex items-center gap-3 text-slate-700"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i> <span class="font-medium">Yapay Zeka Destekli Değerleme</span></li>
+                        <li class="flex items-center gap-3 text-slate-700"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i> <span class="font-medium">Şeffaf Süreç Yönetimi</span></li>
+                    </ul>
+                    <div class="mt-8">
+                        <a href="about.html" class="inline-block bg-blue-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-800 transition">
+                            Daha Fazla Bilgi <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SELL PROPERTY CTA -->
+    <section id="sell" class="py-24 bg-white border-t border-slate-200">
+        <div class="container mx-auto px-4">
+            <div class="bg-gradient-to-r from-blue-900 to-slate-900 rounded-3xl shadow-2xl overflow-hidden relative">
+                <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white opacity-5"></div>
+                <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-white opacity-5"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 items-center">
+                    <div class="p-10 md:p-16 text-white">
+                        <div class="inline-block bg-amber-500 text-blue-900 text-xs font-bold px-3 py-1 rounded-full mb-4">DEĞERLEME & PAZARLAMA</div>
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">Mülkünüzü Değerinde <br>Satalım & Kiralayalım</h2>
+                        <p class="text-blue-100 mb-8 text-lg leading-relaxed">
+                            FOKUS, mülkünüz için en doğru fiyatı belirler, profesyonel fotoğraf çekimi ve sanal tur ile ilanınızı hazırlar.
+                        </p>
+                        <div class="grid grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <div class="text-3xl font-bold text-amber-400">15+</div>
+                                <div class="text-sm text-blue-200">Günde Ortalama Satış</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold text-amber-400">%98</div>
+                                <div class="text-sm text-blue-200">Müşteri Memnuniyeti</div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="sell-property.html" class="bg-amber-500 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-amber-600 transition shadow-lg flex items-center justify-center gap-2 btn-secondary">
+                                <i class="fa-solid fa-calculator"></i> Ücretsiz Ekspertiz Al
+                            </a>
+                            <a href="contact.html" class="bg-transparent border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-white/10 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-comments"></i> Danışmana Sor
+                            </a>
+                        </div>
+                    </div>
+                    <div class="h-64 md:h-full bg-cover bg-center min-h-[400px]" style="background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="footer" class="bg-slate-900 text-slate-400 pt-20 pb-10 border-t border-slate-800">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div>
+                    <a href="index.html" class="flex items-center gap-2 mb-6 group">
+                        <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl group-hover:bg-amber-500 transition-colors">F</div>
+                        <span class="text-2xl font-bold text-white tracking-tight">FOKUS</span>
+                    </a>
+                    <p class="text-sm leading-relaxed mb-6 text-slate-400">Kocaeli ve Samsun bölgelerinde, yapay zeka destekli ve danışman odaklı güvenilir emlak hizmeti.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition text-slate-400"><i class="fa-brands fa-instagram fa-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition text-slate-400"><i class="fa-brands fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 hover:text-white transition text-slate-400"><i class="fa-brands fa-twitter fa-lg"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-lg">Yasal</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="privacy.html" class="hover:text-white transition hover:translate-x-1 inline-block">KVKK Aydınlatma Metni</a></li>
+                        <li><a href="privacy.html#gizlilik" class="hover:text-white transition hover:translate-x-1 inline-block">Gizlilik Politikası</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition hover:translate-x-1 inline-block">Kullanım Koşulları</a></li>
+                        <li><a href="privacy.html#cerez" class="hover:text-white transition hover:translate-x-1 inline-block">Çerez Politikası</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-white font-bold mb-6 text-lg">Bilgi Merkezi</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="blog.html" class="hover:text-white transition hover:translate-x-1 inline-block">Blog</a></li>
+                        <li><a href="contact.html#faq" class="hover:text-white transition hover:translate-x-1 inline-block">Sıkça Sorulan Sorular</a></li>
+                        <li><a href="blog.html?category=deprem" class="flex items-center gap-2 text-amber-500 hover:text-amber-400 transition font-semibold hover:translate-x-1 inline-block">
+                            <i class="fa-solid fa-house-crack"></i> Deprem Bilinçlendirme
+                        </a></li>
+                        <li><a href="blog.html?category=rehber" class="hover:text-white transition hover:translate-x-1 inline-block">Emlak Rehberi</a></li>
+                    </ul>
+                </div>
+
+                <div id="contact">
+                    <h4 class="text-white font-bold mb-6 text-lg">Bize Ulaşın</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center shrink-0 text-blue-500"><i class="fa-solid fa-location-dot"></i></div>
+                            <span class="mt-1">Merkez: İzmit, Kocaeli <br> Şube: Atakum, Samsun</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center shrink-0 text-blue-500"><i class="fa-solid fa-phone"></i></div>
+                            <span>+90 (850) 555 00 00</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center shrink-0 text-blue-500"><i class="fa-solid fa-envelope"></i></div>
+                            <span>info@fokusemlak.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-8 text-center text-xs text-slate-500 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p>&copy; 2024 FOKUS Emlak. Tüm hakları saklıdır.</p>
+                <p class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> System Status: Active</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- TRACKER MODAL -->
+    <div id="tracker-modal" class="hidden fixed inset-0 bg-black/60 z-[80] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl relative fade-in">
+            <button onclick="closeModal('tracker-modal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 text-blue-900 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-route"></i></div>
+                <h3 class="text-2xl font-bold text-slate-900">Sürecini Takip Et</h3>
+                <p class="text-slate-500 text-sm">Size verilen işlem kodunu girerek durumu anlık izleyin.</p>
+            </div>
+            <form onsubmit="event.preventDefault(); window.location.href='tracker.html?code=' + this.code.value;" class="space-y-4">
+                <input type="text" name="code" placeholder="Takip Kodu (Örn: TR-2024-88)" class="w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-900 outline-none text-center font-mono text-lg tracking-widest uppercase form-input" required>
+                <button type="submit" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-lg transition btn-primary">Sorgula</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yol Arkadaşım - Süreç Takip | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="bg-slate-50">
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                <span class="text-2xl font-bold text-blue-900">FOKUS</span>
+            </a>
+            <a href="index.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Ana Sayfa</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-blue-100 text-blue-900 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-slate-900 mb-2">Yol Arkadaşım</h1>
+                <p class="text-slate-600">İşlem sürecinizi anlık takip edin</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+                <div class="bg-gradient-to-r from-blue-900 to-slate-900 text-white p-6 rounded-xl mb-8">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-check text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-lg">Takip Kodu: TR-2024-88</div>
+                            <div class="text-blue-200 text-sm">İzmit Merkez 3+1 Daire - Satış İşlemi</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Steps -->
+                <div class="space-y-6">
+                    <!-- Step 1 - Completed -->
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div class="w-0.5 h-full bg-green-500 my-1"></div>
+                        </div>
+                        <div class="flex-1 pb-8">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-lg">Kaparo Alındı</h4>
+                                <span class="badge badge-success">Tamamlandı</span>
+                            </div>
+                            <p class="text-slate-600 text-sm mb-2">Alıcı ile satıcı arasında kaparo anlaşması yapıldı.</p>
+                            <p class="text-xs text-slate-400">12.11.2024 - 14:30</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 - Completed -->
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div class="w-0.5 h-full bg-slate-300 my-1"></div>
+                        </div>
+                        <div class="flex-1 pb-8">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-lg">Eksper Raporu</h4>
+                                <span class="badge badge-success">Tamamlandı</span>
+                            </div>
+                            <p class="text-slate-600 text-sm mb-2">Mülk değerleme raporu hazırlandı.</p>
+                            <p class="text-xs text-slate-400">14.11.2024 - 10:00</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 - In Progress -->
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold animate-pulse">
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+                            </div>
+                            <div class="w-0.5 h-full bg-slate-300 my-1"></div>
+                        </div>
+                        <div class="flex-1 pb-8">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-lg text-amber-600">Kredi Onayı Bekleniyor</h4>
+                                <span class="badge badge-warning">Devam Ediyor</span>
+                            </div>
+                            <p class="text-slate-600 text-sm mb-2">Banka kredi başvurusu değerlendirmede.</p>
+                            <p class="text-xs text-slate-400">Tahmini: 3-5 iş günü</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 - Pending -->
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-400 font-bold">
+                                <i class="fa-solid fa-hourglass"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-lg text-slate-400">Tapu İşlemleri</h4>
+                                <span class="badge bg-slate-100 text-slate-600">Beklemede</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Kredi onayı sonrası başlanacak.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>

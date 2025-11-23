@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlanlar | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="bg-slate-50">
+    <!-- Simple Nav -->
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                <span class="text-2xl font-bold text-blue-900">FOKUS</span>
+            </a>
+            <a href="index.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Ana Sayfa</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">İlanlar</h1>
+            <p class="text-slate-600">Toplam <span class="font-bold text-blue-900">24</span> ilan bulundu</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Filters -->
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-xl shadow border border-slate-200 sticky top-4">
+                    <h3 class="font-bold text-lg mb-4">Filtreler</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-2">İşlem Tipi</label>
+                            <select class="form-input form-select">
+                                <option>Tümü</option>
+                                <option>Satılık</option>
+                                <option>Kiralık</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-2">İl</label>
+                            <select class="form-input form-select">
+                                <option>Tümü</option>
+                                <option>Kocaeli</option>
+                                <option>Samsun</option>
+                            </select>
+                        </div>
+                        <button class="w-full bg-blue-900 text-white py-2.5 rounded-lg hover:bg-blue-800 transition btn-primary">
+                            Filtrele
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listings Grid -->
+            <div class="lg:col-span-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Property Card -->
+                    <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden hover-lift">
+                        <div class="relative h-48">
+                            <span class="absolute top-4 left-4 bg-blue-900 text-white text-xs font-bold px-3 py-1 rounded-full z-10">SATILIK</span>
+                            <img src="https://images.unsplash.com/photo-1600596542815-2495db98dada?w=400" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-5">
+                            <h4 class="font-bold text-lg mb-2">İzmit Merkez 3+1</h4>
+                            <p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-location-dot"></i> İzmit, Kocaeli</p>
+                            <div class="flex justify-between text-sm text-slate-600 mb-4">
+                                <span><i class="fa-solid fa-bed"></i> 3+1</span>
+                                <span><i class="fa-solid fa-ruler-combined"></i> 145 m²</span>
+                            </div>
+                            <div class="flex justify-between items-center border-t pt-4">
+                                <p class="text-blue-900 font-bold text-xl">₺ 3.750.000</p>
+                                <a href="listing-detail.html?id=1" class="text-blue-900 hover:text-blue-700"><i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Repeat cards... -->
+                    <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden hover-lift">
+                        <div class="relative h-48">
+                            <span class="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10">KİRALIK</span>
+                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-5">
+                            <h4 class="font-bold text-lg mb-2">Atakum Sahil 2+1</h4>
+                            <p class="text-slate-500 text-sm mb-4"><i class="fa-solid fa-location-dot"></i> Atakum, Samsun</p>
+                            <div class="flex justify-between text-sm text-slate-600 mb-4">
+                                <span><i class="fa-solid fa-bed"></i> 2+1</span>
+                                <span><i class="fa-solid fa-ruler-combined"></i> 100 m²</span>
+                            </div>
+                            <div class="flex justify-between items-center border-t pt-4">
+                                <p class="text-blue-900 font-bold text-xl">₺ 22.000/ay</p>
+                                <a href="listing-detail.html?id=2" class="text-blue-900 hover:text-blue-700"><i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>

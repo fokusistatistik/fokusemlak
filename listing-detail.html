@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlan Detay | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="bg-slate-50">
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                <span class="text-2xl font-bold text-blue-900">FOKUS</span>
+            </a>
+            <a href="listings.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Tüm İlanlar</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden mb-6">
+                    <img src="https://images.unsplash.com/photo-1600596542815-2495db98dada?w=800" class="w-full h-96 object-cover">
+                </div>
+
+                <div class="bg-white rounded-xl shadow border border-slate-200 p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span class="inline-block bg-blue-900 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">SATILIK</span>
+                            <h1 class="text-3xl font-bold text-slate-900">İzmit Yahyakaptan'da Site İçi Lüks Daire</h1>
+                            <p class="text-slate-500 mt-2"><i class="fa-solid fa-location-dot"></i> İzmit, Kocaeli</p>
+                        </div>
+                        <button class="text-2xl text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-heart"></i></button>
+                    </div>
+
+                    <div class="flex gap-6 mb-8 text-center border-t border-b py-6">
+                        <div class="flex-1">
+                            <div class="text-2xl font-bold text-blue-900">3+1</div>
+                            <div class="text-sm text-slate-500">Oda Sayısı</div>
+                        </div>
+                        <div class="flex-1 border-l">
+                            <div class="text-2xl font-bold text-blue-900">145 m²</div>
+                            <div class="text-sm text-slate-500">Alan</div>
+                        </div>
+                        <div class="flex-1 border-l">
+                            <div class="text-2xl font-bold text-blue-900">3. Kat</div>
+                            <div class="text-sm text-slate-500">Kat</div>
+                        </div>
+                        <div class="flex-1 border-l">
+                            <div class="text-2xl font-bold text-blue-900">2018</div>
+                            <div class="text-sm text-slate-500">Yapım Yılı</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-xl mb-4">Açıklama</h3>
+                        <p class="text-slate-600 leading-relaxed">
+                            Site içerisinde, deniz manzaralı, güneş alan, geniş ve ferah dairedir.
+                            Tüm odalar kullanışlı ve eşya yerleşimine uygundur. Havuz, spor salonu,
+                            kapalı otopark gibi sosyal donatıları mevcuttur.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="bg-white rounded-xl shadow border border-slate-200 p-6 mb-6 sticky top-4">
+                    <div class="text-3xl font-bold text-blue-900 mb-4">₺ 3.750.000</div>
+                    <div class="text-slate-500 text-sm mb-6">m² Fiyatı: ₺ 25.862</div>
+
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Adınız" class="form-input" required>
+                        <input type="tel" placeholder="Telefonunuz" class="form-input" required>
+                        <button type="submit" class="w-full bg-blue-900 text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition btn-primary">
+                            <i class="fa-solid fa-phone mr-2"></i> Arayın Beni
+                        </button>
+                    </form>
+
+                    <div class="mt-6 pt-6 border-t">
+                        <div class="flex items-center gap-3 mb-3">
+                            <img src="https://ui-avatars.com/api/?name=Danışman&background=1e3a8a&color=fff" class="w-12 h-12 rounded-full">
+                            <div>
+                                <div class="font-bold">FOKUS Emlak</div>
+                                <div class="text-sm text-slate-500">Emlak Danışmanı</div>
+                            </div>
+                        </div>
+                        <a href="tel:+908505550000" class="block w-full bg-amber-500 text-white text-center font-bold py-3 rounded-lg hover:bg-amber-600 transition btn-secondary">
+                            <i class="fa-solid fa-headset mr-2"></i> Hemen Ara
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>

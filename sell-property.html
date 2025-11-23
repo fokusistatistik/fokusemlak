@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mülkünüzü Sat/Kirala | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="bg-slate-50">
+    <div id="toast-container" class="fixed top-6 right-4 z-[70] flex flex-col gap-2"></div>
+
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                <span class="text-2xl font-bold text-blue-900">FOKUS</span>
+            </a>
+            <a href="index.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Ana Sayfa</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-slate-900 mb-4">Mülkünüzü Değerinde Satalım</h1>
+                <p class="text-slate-600 text-lg">Ücretsiz değerleme ve profesyonel pazarlama hizmeti ile mülkünüz en kısa sürede alıcısını buluyor.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+                <form onsubmit="handleSellPropertySubmit(event)" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">İşlem Tipi</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="relative flex items-center justify-center p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-900 transition has-[:checked]:border-blue-900 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="operation" value="Satılık" class="sr-only" checked>
+                                <div class="text-center">
+                                    <i class="fa-solid fa-hand-holding-dollar text-2xl text-blue-900 mb-2"></i>
+                                    <div class="font-bold">Satılık</div>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center justify-center p-4 border-2 border-slate-200 rounded-xl cursor-pointer hover:border-blue-900 transition has-[:checked]:border-blue-900 has-[:checked]:bg-blue-50">
+                                <input type="radio" name="operation" value="Kiralık" class="sr-only">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-key text-2xl text-blue-900 mb-2"></i>
+                                    <div class="font-bold">Kiralık</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Emlak Tipi</label>
+                        <select name="type" class="form-input form-select" required>
+                            <option value="">Seçiniz</option>
+                            <option>Konut</option>
+                            <option>Ticari</option>
+                            <option>Arsa/Arazi</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">İl</label>
+                            <select name="city" onchange="loadDistricts('sell')" id="sell_city" class="form-input form-select" required>
+                                <option value="">Seçiniz</option>
+                                <option value="Kocaeli">Kocaeli</option>
+                                <option value="Samsun">Samsun</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">İlçe</label>
+                            <select name="district" id="sell_district" disabled class="form-input form-select" required>
+                                <option value="">Önce İl Seçiniz</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Adres</label>
+                        <textarea name="address" rows="2" class="form-input" placeholder="Detaylı adres bilgisi" required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">m² (Brüt)</label>
+                            <input type="number" name="area" class="form-input" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Oda Sayısı</label>
+                            <select name="rooms" class="form-input form-select" required>
+                                <option>1+1</option>
+                                <option>2+1</option>
+                                <option>3+1</option>
+                                <option>4+1</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Bina Yaşı</label>
+                            <input type="number" name="age" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">İletişim Bilgileriniz</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" name="name" placeholder="Ad Soyad" class="form-input" required>
+                            <input type="tel" name="phone" placeholder="Telefon" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-900 text-white font-bold py-4 rounded-xl hover:bg-blue-800 transition shadow-lg btn-primary">
+                        <i class="fa-solid fa-paper-plane mr-2"></i> Talebimi Gönder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+        async function handleSellPropertySubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Gönderiliyor...';
+
+            const formData = {
+                operation: form.operation.value,
+                type: form.type.value,
+                city: form.city.value,
+                district: form.district.value,
+                address: form.address.value,
+                area: form.area.value,
+                rooms: form.rooms.value,
+                age: form.age.value,
+                name: form.name.value,
+                phone: form.phone.value
+            };
+
+            try {
+                const response = await API.submitSellProperty(formData);
+                if (response.success) {
+                    showToast('Talebiniz alındı! Danışmanımız en kısa sürede arayacak.', 'success');
+                    form.reset();
+                }
+            } catch (error) {
+                showToast('Bir hata oluştu. Lütfen tekrar deneyin.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="bg-slate-50">
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                <span class="text-2xl font-bold text-blue-900">FOKUS</span>
+            </a>
+            <a href="index.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Ana Sayfa</a>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-slate-900 mb-4">Blog</h1>
+            <p class="text-slate-600 text-lg">Emlak piyasası hakkında güncel haberler ve analizler</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <article class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow hover-lift">
+                <div class="relative h-48">
+                    <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400" class="w-full h-full object-cover">
+                    <span class="absolute top-4 right-4 bg-white/90 text-xs font-bold px-2 py-1 rounded">12 Kasım 2024</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Kocaeli Konut Piyasası 2025 Öngörüleri</h3>
+                    <p class="text-slate-600 text-sm mb-4">Yükselen faiz oranları ve inşaat maliyetleri Kocaeli emlak piyasasını nasıl etkileyecek?</p>
+                    <a href="blog-detail.html?slug=kocaeli-2025" class="text-blue-900 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                        Devamını Oku <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+
+            <article class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow hover-lift">
+                <div class="relative h-48">
+                    <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400" class="w-full h-full object-cover">
+                    <span class="absolute top-4 right-4 bg-white/90 text-xs font-bold px-2 py-1 rounded">05 Kasım 2024</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Yatırımcılar İçin Samsun Rehberi</h3>
+                    <p class="text-slate-600 text-sm mb-4">Atakum mu İlkadım mı? ROI en kısa olan bölgeler hangileri?</p>
+                    <a href="blog-detail.html?slug=samsun-yatirim" class="text-blue-900 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                        Devamını Oku <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+
+            <article class="bg-white rounded-xl overflow-hidden border border-slate-200 shadow hover-lift">
+                <div class="relative h-48">
+                    <img src="https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=400" class="w-full h-full object-cover">
+                    <span class="absolute top-4 right-4 bg-white/90 text-xs font-bold px-2 py-1 rounded">28 Ekim 2024</span>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Konut Kredisinde Yeni Dönem</h3>
+                    <p class="text-slate-600 text-sm mb-4">BDDK'nın son düzenlemeleri ikinci evini alacakları nasıl etkiliyor?</p>
+                    <a href="blog-detail.html?slug=konut-kredisi" class="text-blue-900 font-bold text-sm flex items-center gap-1 hover:gap-2 transition-all">
+                        Devamını Oku <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/main.js"></script>
+</body>
+</html>
