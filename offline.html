@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çevrimdışı | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full text-center">
+        <div class="bg-white rounded-2xl shadow-xl p-8 border-2 border-slate-200">
+            <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-wifi-slash text-3xl text-amber-600"></i>
+            </div>
+
+            <h1 class="text-2xl font-bold text-slate-900 mb-4">İnternet Bağlantısı Yok</h1>
+
+            <p class="text-slate-600 mb-6">
+                Şu anda çevrimdışısınız. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.
+            </p>
+
+            <button onclick="window.location.reload()" class="w-full bg-blue-900 text-white font-bold py-3 rounded-xl hover:bg-blue-800 transition mb-3">
+                <i class="fa-solid fa-rotate-right mr-2"></i> Tekrar Dene
+            </button>
+
+            <a href="index.html" class="block w-full bg-slate-100 text-slate-700 font-bold py-3 rounded-xl hover:bg-slate-200 transition">
+                <i class="fa-solid fa-home mr-2"></i> Ana Sayfaya Dön
+            </a>
+
+            <div class="mt-6 pt-6 border-t border-slate-200">
+                <p class="text-sm text-slate-500 mb-2">Önbelleğe alınmış sayfalar:</p>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <a href="/index.html" class="text-xs bg-blue-50 text-blue-900 px-3 py-1 rounded-full hover:bg-blue-100">Ana Sayfa</a>
+                    <a href="/listings.html" class="text-xs bg-blue-50 text-blue-900 px-3 py-1 rounded-full hover:bg-blue-100">İlanlar</a>
+                    <a href="/dashboard.html" class="text-xs bg-blue-50 text-blue-900 px-3 py-1 rounded-full hover:bg-blue-100">Hesabım</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <a href="index.html" class="inline-flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold">F</div>
+                <span class="text-xl font-bold text-slate-900">FOKUS</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-retry connection
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        function checkConnection() {
+            if (navigator.onLine) {
+                window.location.reload();
+            } else {
+                retryCount++;
+                if (retryCount < maxRetries) {
+                    setTimeout(checkConnection, 3000);
+                }
+            }
+        }
+
+        // Start checking after 2 seconds
+        setTimeout(checkConnection, 2000);
+
+        // Listen for online event
+        window.addEventListener('online', () => {
+            console.log('Connection restored');
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>

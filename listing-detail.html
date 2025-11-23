@@ -23,8 +23,52 @@
     <div class="container mx-auto px-4 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2">
+                <!-- Image Gallery & Video -->
                 <div class="bg-white rounded-xl shadow border border-slate-200 overflow-hidden mb-6">
-                    <img src="https://images.unsplash.com/photo-1600596542815-2495db98dada?w=800" class="w-full h-96 object-cover">
+                    <div class="relative h-96">
+                        <img id="mainImage" src="https://images.unsplash.com/photo-1600596542815-2495db98dada?w=800" class="w-full h-full object-cover">
+
+                        <!-- View & Like Counter Overlay -->
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <div class="bg-white/90 backdrop-blur px-3 py-2 rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-eye text-blue-900"></i>
+                                <span class="font-bold text-sm">1,245</span>
+                            </div>
+                            <div class="bg-white/90 backdrop-blur px-3 py-2 rounded-lg flex items-center gap-2">
+                                <i class="fa-solid fa-heart text-red-500"></i>
+                                <span class="font-bold text-sm">89</span>
+                            </div>
+                        </div>
+
+                        <!-- AR/VR Button -->
+                        <button onclick="openARView()" class="absolute bottom-4 left-4 bg-purple-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-purple-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-vr-cardboard"></i> Sanal Tur
+                        </button>
+
+                        <!-- 360 View Button -->
+                        <button onclick="open360View()" class="absolute bottom-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-rotate"></i> 360° Görünüm
+                        </button>
+                    </div>
+
+                    <!-- Video Section (if available) -->
+                    <div class="p-4 bg-slate-50 border-t">
+                        <div class="aspect-video bg-slate-200 rounded-lg overflow-hidden">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen
+                                class="w-full h-full">
+                            </iframe>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2 flex items-center gap-2">
+                            <i class="fa-brands fa-youtube text-red-600"></i>
+                            Video Tur - İlanın tüm detaylarını inceleyin
+                        </p>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-xl shadow border border-slate-200 p-8">
@@ -58,10 +102,52 @@
 
                     <div>
                         <h3 class="font-bold text-xl mb-4">Açıklama</h3>
-                        <p class="text-slate-600 leading-relaxed">
+                        <p class="text-slate-600 leading-relaxed mb-6">
                             Site içerisinde, deniz manzaralı, güneş alan, geniş ve ferah dairedir.
                             Tüm odalar kullanışlı ve eşya yerleşimine uygundur. Havuz, spor salonu,
                             kapalı otopark gibi sosyal donatıları mevcuttur.
+                        </p>
+
+                        <!-- Social Share Buttons -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="text-sm font-bold text-slate-600">Paylaş:</span>
+                            <button onclick="shareOnWhatsApp()" class="w-10 h-10 bg-green-500 text-white rounded-full hover:bg-green-600 transition flex items-center justify-center">
+                                <i class="fa-brands fa-whatsapp"></i>
+                            </button>
+                            <button onclick="shareOnInstagram()" class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-500 text-white rounded-full hover:opacity-90 transition flex items-center justify-center">
+                                <i class="fa-brands fa-instagram"></i>
+                            </button>
+                            <button onclick="shareOnFacebook()" class="w-10 h-10 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex items-center justify-center">
+                                <i class="fa-brands fa-facebook"></i>
+                            </button>
+                            <button onclick="shareOnTwitter()" class="w-10 h-10 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition flex items-center justify-center">
+                                <i class="fa-brands fa-twitter"></i>
+                            </button>
+                            <button onclick="copyLink()" class="w-10 h-10 bg-slate-200 text-slate-700 rounded-full hover:bg-slate-300 transition flex items-center justify-center">
+                                <i class="fa-solid fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Google Maps Location -->
+                    <div class="mt-8 pt-8 border-t">
+                        <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-map-marker-alt text-red-500"></i> Konum
+                        </h3>
+                        <div class="bg-slate-100 rounded-xl overflow-hidden h-64 mb-4">
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48348.848278782815!2d29.914895273071293!3d40.76503187927424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cb4f0d63ce7d01%3A0xf80c0f1c1c16f0a8!2s%C4%B0zmit%2C%20Kocaeli!5e0!3m2!1str!2str!4v1700000000000!5m2!1str!2str"
+                                width="100%"
+                                height="100%"
+                                style="border:0;"
+                                allowfullscreen=""
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                        <p class="text-sm text-slate-600 flex items-center gap-2">
+                            <i class="fa-solid fa-location-dot text-blue-900"></i>
+                            Yahyakaptan Mahallesi, İzmit, Kocaeli
                         </p>
                     </div>
                 </div>
@@ -100,5 +186,63 @@
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/main.js"></script>
+    <script>
+        // AR/VR Functions
+        function openARView() {
+            showToast('AR görünüm açılıyor... (Demo)', 'info');
+            // In production: window.open('/ar-view.html?property=1', '_blank');
+        }
+
+        function open360View() {
+            showToast('360° görünüm açılıyor... (Demo)', 'info');
+            // In production: window.open('/360-view.html?property=1', '_blank');
+        }
+
+        // Social Share Functions
+        function shareOnWhatsApp() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('İzmit\'te Satılık Muhteşem Ev! 3+1, 145m²');
+            window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+        }
+
+        function shareOnInstagram() {
+            // Instagram doesn't support direct URL sharing, copy link instead
+            copyLink();
+            showToast('Link kopyalandı! Instagram Story\'de paylaşabilirsiniz.', 'success');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('İzmit\'te Satılık Muhteşem Ev! 3+1, 145m²');
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast('Link kopyalandı!', 'success');
+            });
+        }
+
+        // Track view on page load
+        window.addEventListener('load', async () => {
+            try {
+                await fetch('https://n8n.fokusistatistik.com/webhook/property/view', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        propertyId: '1',
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (error) {
+                console.error('View tracking error:', error);
+            }
+        });
+    </script>
 </body>
 </html>
