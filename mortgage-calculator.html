@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kredi Hesaplama | FOKUS Emlak</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
+    <link rel="apple-touch-icon" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
+
+    <!-- Meta Tags -->
+    <meta name="description" content="Konut kredisi hesaplama - Aylık ödeme, faiz oranları ve banka karşılaştırma aracı">
+    <meta name="keywords" content="konut kredisi, mortgage, kredi hesaplama, banka karşılaştırma">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-slate-50">
+    <div id="toast-container" class="fixed top-6 right-4 z-[70] flex flex-col gap-2"></div>
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png" alt="FOKUS Emlak" class="h-10 w-auto object-contain">
+            </a>
+            <a href="index.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Ana Sayfa</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <div class="inline-block bg-blue-100 text-blue-900 px-4 py-2 rounded-full text-sm font-bold mb-4">
+                <i class="fa-solid fa-calculator mr-2"></i> KREDİ HESAPLAMA
+            </div>
+            <h1 class="text-4xl font-bold text-slate-900 mb-4">Konut Kredisi Hesaplama</h1>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto">
+                Aylık ödemenizi hesaplayın ve bankaları karşılaştırın
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Calculator Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+                    <h2 class="text-2xl font-bold text-slate-900 mb-6">Hesaplama Parametreleri</h2>
+
+                    <div class="space-y-6">
+                        <!-- Property Price -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">
+                                <i class="fa-solid fa-home text-blue-900 mr-2"></i> Gayrimenkul Değeri (TL)
+                            </label>
+                            <input type="number" id="propertyPrice" value="5000000"
+                                   class="form-input text-lg font-semibold"
+                                   oninput="calculateMortgage()"
+                                   placeholder="Örn: 5.000.000">
+                            <p class="text-xs text-slate-500 mt-1">Almak istediğiniz evin toplam fiyatı</p>
+                        </div>
+
+                        <!-- Down Payment -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">
+                                <i class="fa-solid fa-piggy-bank text-green-600 mr-2"></i> Peşinat (%)
+                            </label>
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="downPaymentPercent" min="10" max="50" value="20"
+                                       class="flex-1" oninput="calculateMortgage()">
+                                <span id="downPaymentDisplay" class="text-2xl font-bold text-green-600 w-16">20%</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mt-2">
+                                Peşinat Tutarı: <span id="downPaymentAmount" class="font-bold text-green-600">₺ 1.000.000</span>
+                            </p>
+                        </div>
+
+                        <!-- Loan Amount -->
+                        <div class="bg-blue-50 rounded-xl p-4 border-2 border-blue-200">
+                            <label class="block text-sm font-bold text-blue-900 mb-1">Kredi Tutarı</label>
+                            <div id="loanAmount" class="text-3xl font-bold text-blue-900">₺ 4.000.000</div>
+                        </div>
+
+                        <!-- Interest Rate -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">
+                                <i class="fa-solid fa-percent text-amber-600 mr-2"></i> Yıllık Faiz Oranı (%)
+                            </label>
+                            <div class="flex items-center gap-4">
+                                <input type="range" id="interestRate" min="1" max="5" step="0.1" value="3.5"
+                                       class="flex-1" oninput="calculateMortgage()">
+                                <span id="interestRateDisplay" class="text-2xl font-bold text-amber-600 w-20">3.5%</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">TCMB ortalama konut kredisi faiz oranı: %3.05</p>
+                        </div>
+
+                        <!-- Loan Term -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">
+                                <i class="fa-solid fa-calendar text-purple-600 mr-2"></i> Kredi Vadesi (Yıl)
+                            </label>
+                            <div class="grid grid-cols-4 gap-3">
+                                <button onclick="setLoanTerm(5)" class="loan-term-btn" data-term="5">5 Yıl</button>
+                                <button onclick="setLoanTerm(10)" class="loan-term-btn" data-term="10">10 Yıl</button>
+                                <button onclick="setLoanTerm(15)" class="loan-term-btn active" data-term="15">15 Yıl</button>
+                                <button onclick="setLoanTerm(20)" class="loan-term-btn" data-term="20">20 Yıl</button>
+                            </div>
+                            <input type="hidden" id="loanTerm" value="15">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Schedule Chart -->
+                <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200 mt-8">
+                    <h3 class="text-xl font-bold text-slate-900 mb-4">
+                        <i class="fa-solid fa-chart-line text-blue-900 mr-2"></i> Ödeme Planı
+                    </h3>
+                    <canvas id="paymentChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div>
+                <div class="bg-gradient-to-br from-blue-900 to-slate-900 rounded-2xl shadow-2xl p-8 text-white sticky top-4">
+                    <h3 class="text-2xl font-bold mb-6">Aylık Ödeme</h3>
+
+                    <div id="monthlyPayment" class="text-5xl font-bold mb-8">₺ 0</div>
+
+                    <div class="space-y-4 border-t border-white/20 pt-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-200 text-sm">Toplam Ödeme:</span>
+                            <span id="totalPayment" class="font-bold text-lg">₺ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-200 text-sm">Toplam Faiz:</span>
+                            <span id="totalInterest" class="font-bold text-lg text-amber-400">₺ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-200 text-sm">Vade:</span>
+                            <span id="termDisplay" class="font-bold">15 yıl (180 ay)</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/20">
+                        <button onclick="showBankComparison()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl transition">
+                            <i class="fa-solid fa-building-columns mr-2"></i> Bankaları Karşılaştır
+                        </button>
+                        <button onclick="downloadPDF()" class="w-full bg-white/10 hover:bg-white/20 text-white font-bold py-3 rounded-xl transition mt-3">
+                            <i class="fa-solid fa-download mr-2"></i> Rapor İndir (PDF)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Tips -->
+                <div class="bg-amber-50 rounded-xl p-6 border border-amber-200 mt-6">
+                    <h4 class="font-bold text-amber-900 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb"></i> İpuçları
+                    </h4>
+                    <ul class="space-y-2 text-sm text-amber-800">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check-circle text-amber-600 mt-0.5"></i>
+                            <span>Peşinatı arttırmak aylık ödemeyi azaltır</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check-circle text-amber-600 mt-0.5"></i>
+                            <span>Kısa vadeli kredilerde toplam faiz daha düşüktür</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check-circle text-amber-600 mt-0.5"></i>
+                            <span>Gelirin %30-40'ından fazlasını kredi ödemesine ayırmayın</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Comparison Modal -->
+        <div id="bankComparisonModal" class="hidden fixed inset-0 bg-black/60 z-[80] flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl p-8 max-w-4xl w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
+                <button onclick="closeBankComparison()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-2xl"></i>
+                </button>
+
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">
+                    <i class="fa-solid fa-building-columns text-blue-900 mr-2"></i> Banka Karşılaştırması
+                </h3>
+
+                <div id="bankComparisonContent" class="space-y-4">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+        let chart = null;
+
+        // Banks data (can be fetched from API in production)
+        const banks = [
+            { name: 'Ziraat Bankası', rate: 3.05, color: '#22c55e' },
+            { name: 'İş Bankası', rate: 3.15, color: '#3b82f6' },
+            { name: 'Garanti BBVA', rate: 3.25, color: '#f59e0b' },
+            { name: 'Yapı Kredi', rate: 3.35, color: '#8b5cf6' },
+            { name: 'Akbank', rate: 3.45, color: '#ef4444' }
+        ];
+
+        function calculateMortgage() {
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value) || 0;
+            const downPaymentPercent = parseFloat(document.getElementById('downPaymentPercent').value);
+            const interestRate = parseFloat(document.getElementById('interestRate').value) / 100;
+            const loanTermYears = parseInt(document.getElementById('loanTerm').value);
+
+            // Update displays
+            document.getElementById('downPaymentDisplay').textContent = downPaymentPercent + '%';
+            document.getElementById('interestRateDisplay').textContent = (interestRate * 100).toFixed(1) + '%';
+
+            // Calculate amounts
+            const downPayment = propertyPrice * (downPaymentPercent / 100);
+            const loanAmount = propertyPrice - downPayment;
+            const monthlyRate = interestRate / 12;
+            const totalMonths = loanTermYears * 12;
+
+            // Update UI
+            document.getElementById('downPaymentAmount').textContent = '₺ ' + formatNumber(downPayment);
+            document.getElementById('loanAmount').textContent = '₺ ' + formatNumber(loanAmount);
+
+            // Calculate monthly payment using formula: P = L[c(1 + c)^n]/[(1 + c)^n - 1]
+            const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
+                                  (Math.pow(1 + monthlyRate, totalMonths) - 1);
+
+            const totalPayment = monthlyPayment * totalMonths;
+            const totalInterest = totalPayment - loanAmount;
+
+            // Update results
+            document.getElementById('monthlyPayment').textContent = '₺ ' + formatNumber(monthlyPayment);
+            document.getElementById('totalPayment').textContent = '₺ ' + formatNumber(totalPayment);
+            document.getElementById('totalInterest').textContent = '₺ ' + formatNumber(totalInterest);
+            document.getElementById('termDisplay').textContent = `${loanTermYears} yıl (${totalMonths} ay)`;
+
+            // Update chart
+            updateChart(loanAmount, totalInterest, loanTermYears);
+        }
+
+        function updateChart(principal, interest, years) {
+            const ctx = document.getElementById('paymentChart');
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            // Generate yearly data
+            const labels = [];
+            const principalData = [];
+            const interestData = [];
+
+            for (let year = 1; year <= years; year++) {
+                labels.push(`${year}. Yıl`);
+                const ratio = year / years;
+                principalData.push(principal * ratio);
+                interestData.push(interest * (1 - Math.pow(1 - ratio, 2)));
+            }
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Anapara',
+                        data: principalData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true
+                    }, {
+                        label: 'Faiz',
+                        data: interestData,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₺' + (value / 1000000).toFixed(1) + 'M';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setLoanTerm(years) {
+            document.getElementById('loanTerm').value = years;
+
+            // Update button states
+            document.querySelectorAll('.loan-term-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.term == years) {
+                    btn.classList.add('active');
+                }
+            });
+
+            calculateMortgage();
+        }
+
+        function showBankComparison() {
+            const modal = document.getElementById('bankComparisonModal');
+            const content = document.getElementById('bankComparisonContent');
+
+            const propertyPrice = parseFloat(document.getElementById('propertyPrice').value);
+            const downPaymentPercent = parseFloat(document.getElementById('downPaymentPercent').value);
+            const loanAmount = propertyPrice * (1 - downPaymentPercent / 100);
+            const loanTermYears = parseInt(document.getElementById('loanTerm').value);
+            const totalMonths = loanTermYears * 12;
+
+            let html = '<div class="grid gap-4">';
+
+            banks.forEach(bank => {
+                const monthlyRate = (bank.rate / 100) / 12;
+                const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
+                                      (Math.pow(1 + monthlyRate, totalMonths) - 1);
+                const totalPayment = monthlyPayment * totalMonths;
+                const totalInterest = totalPayment - loanAmount;
+
+                html += `
+                    <div class="border-2 border-slate-200 rounded-xl p-6 hover:border-blue-900 transition">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-bold text-lg" style="color: ${bank.color}">${bank.name}</h4>
+                            <span class="bg-slate-100 px-3 py-1 rounded-full text-sm font-bold">%${bank.rate.toFixed(2)}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Aylık Ödeme</div>
+                                <div class="font-bold text-blue-900">₺${formatNumber(monthlyPayment)}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Toplam Ödeme</div>
+                                <div class="font-bold text-slate-700">₺${formatNumber(totalPayment)}</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 mb-1">Toplam Faiz</div>
+                                <div class="font-bold text-amber-600">₺${formatNumber(totalInterest)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+        }
+
+        function closeBankComparison() {
+            document.getElementById('bankComparisonModal').classList.add('hidden');
+        }
+
+        function downloadPDF() {
+            showToast('PDF raporu hazırlanıyor... (Demo)', 'info');
+            // In production, use a library like jsPDF
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('tr-TR', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+
+        // Initialize
+        calculateMortgage();
+    </script>
+
+    <style>
+        .loan-term-btn {
+            @apply px-4 py-3 border-2 border-slate-200 rounded-xl font-medium text-slate-700 hover:border-purple-600 hover:text-purple-600 transition;
+        }
+        .loan-term-btn.active {
+            @apply border-purple-600 bg-purple-50 text-purple-600;
+        }
+    </style>
+</body>
+</html>

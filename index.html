@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="FOKUS Emlak - Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı.">
-    <meta name="keywords" content="emlak, gayrimenkul, Kocaeli, Samsun, yapay zeka, AI değerleme">
+    <meta name="keywords" content="emlak, gayrimenkul, Kocaeli, Samsun, yapay zeka, AI değerleme, konut kredisi, mortgage hesaplama">
     <meta name="author" content="FOKUS Emlak">
 
     <title>FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı</title>
@@ -12,6 +12,23 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
     <link rel="apple-touch-icon" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fokusemlak.com/">
+    <meta property="og:title" content="FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı">
+    <meta property="og:description" content="Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı. Kocaeli ve Samsun'da profesyonel hizmet.">
+    <meta property="og:image" content="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://fokusemlak.com/">
+    <meta property="twitter:title" content="FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı">
+    <meta property="twitter:description" content="Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı.">
+    <meta property="twitter:image" content="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://fokusemlak.com/">
 
     <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -824,14 +841,34 @@
     </a>
 
     <!-- SCRIPTS -->
+    <script src="/assets/js/security.js"></script>
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/ai-search.js"></script>
+    <script src="/assets/js/language.js"></script>
+    <script src="/assets/js/analytics.js"></script>
     <script src="/assets/js/chatbot.js"></script>
     <script src="/assets/js/pwa.js"></script>
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#1e3a8a">
+
+    <!-- Lazy Loading for Images -->
+    <script>
+        // Enable lazy loading for all images
+        if ('loading' in HTMLImageElement.prototype) {
+            const images = document.querySelectorAll('img[loading="lazy"]');
+            images.forEach(img => {
+                img.src = img.dataset.src || img.src;
+            });
+        } else {
+            // Fallback for browsers that don't support lazy loading
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+            document.body.appendChild(script);
+        }
+    </script>
 </body>
 </html>
