@@ -137,9 +137,16 @@
     </div>
 
     <!-- SCRIPTS -->
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/assets/js/supabase-client.js"></script>
+    <script src="/assets/js/supabase-client-users.js"></script>
+
+    <!-- Legacy Scripts (fallback) -->
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/main.js"></script>
+
     <script>
         // Tab Switching
         function switchTab(tab) {
@@ -165,7 +172,7 @@
             }
         }
 
-        // Login Form Submit
+        // Login Form Submit (UPDATED FOR SUPABASE)
         async function handleLoginSubmit(event) {
             event.preventDefault();
             const form = event.target;
@@ -179,13 +186,36 @@
             const password = form.password.value;
 
             try {
-                const result = await Auth.login(email, password);
+                // Use Supabase authentication
+                const result = await SupabaseClient.signIn(email, password);
 
                 if (result.success) {
-                    showToast(`Hoşgeldiniz, ${result.user.name || result.user.email}!`, 'success');
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 1500);
+                    // Get user profile to determine role
+                    const userResult = await SupabaseClient.getCurrentUser();
+
+                    if (userResult.success) {
+                        const role = userResult.user.profile.role;
+                        const name = userResult.user.profile.full_name;
+
+                        showToast(`Hoşgeldiniz, ${name}!`, 'success');
+
+                        // Redirect based on role
+                        setTimeout(() => {
+                            if (role === 'admin') {
+                                window.location.href = '/admin/supabase-admin.html';
+                            } else if (role === 'agent') {
+                                window.location.href = '/agent-dashboard.html';
+                            } else {
+                                window.location.href = '/user-dashboard.html';
+                            }
+                        }, 1000);
+                    } else {
+                        // Default redirect
+                        showToast('Giriş başarılı!', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/user-dashboard.html';
+                        }, 1000);
+                    }
                 } else {
                     throw new Error(result.error || 'Giriş başarısız');
                 }
@@ -197,7 +227,7 @@
             }
         }
 
-        // Register Form Submit
+        // Register Form Submit (UPDATED FOR SUPABASE)
         async function handleRegisterSubmit(event) {
             event.preventDefault();
             const form = event.target;
@@ -208,21 +238,31 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Kayıt yapılıyor...';
 
             const userData = {
-                firstName: form.firstName.value,
-                lastName: form.lastName.value,
+                full_name: `${form.firstName.value} ${form.lastName.value}`,
                 email: form.email.value,
                 phone: form.phone.value,
-                password: form.password.value
+                password: form.password.value,
+                role: 'user' // Default role
             };
 
             try {
-                const result = await Auth.register(userData);
+                // Use Supabase signup
+                const result = await SupabaseClient.signUp(
+                    userData.email,
+                    userData.password,
+                    {
+                        full_name: userData.full_name,
+                        phone: userData.phone,
+                        role: userData.role
+                    }
+                );
 
                 if (result.success) {
-                    showToast('Kayıt başarılı! Yönlendiriliyorsunuz...', 'success');
+                    showToast('Kayıt başarılı! Email adresinizi doğrulayın.', 'success');
                     setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 1500);
+                        switchTab('login');
+                        showToast('Lütfen email adresinizi kontrol edin', 'info');
+                    }, 2000);
                 } else {
                     throw new Error(result.error || 'Kayıt başarısız');
                 }
@@ -234,45 +274,58 @@
             }
         }
 
-        // Google Login
+        // Google Login (UPDATED FOR SUPABASE)
         async function handleGoogleLoginClick() {
             try {
-                const result = await Auth.googleLogin();
+                const result = await SupabaseClient.signInWithGoogle();
 
-                if (result.success) {
-                    showToast(`Hoşgeldiniz, ${result.user.name}!`, 'success');
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 1500);
-                } else {
+                if (!result.success && result.error) {
                     throw new Error(result.error);
                 }
+                // Google OAuth redirects automatically
             } catch (error) {
                 console.error('Google login error:', error);
                 showToast(error.message || 'Google girişi başarısız', 'error');
             }
         }
 
-        // Test Login (Development)
+        // Test Login (Development) - REMOVED FOR PRODUCTION
         async function handleTestLogin() {
-            try {
-                const result = await Auth.testLogin('test@fokusemlak.com');
-
-                if (result.success) {
-                    showToast('🧪 Test hesabı ile giriş yapıldı!', 'success');
-                    setTimeout(() => {
-                        window.location.href = '/dashboard.html';
-                    }, 1000);
-                }
-            } catch (error) {
-                showToast('Test girişi başarısız', 'error');
-            }
+            showToast('Test modu kullanılamıyor. Lütfen gerçek hesap ile giriş yapın.', 'info');
         }
 
         // Check if already logged in
-        if (Auth.isAuthenticated()) {
-            window.location.href = '/dashboard.html';
+        async function checkAuth() {
+            const { session } = await SupabaseClient.getSession();
+            if (session) {
+                const userResult = await SupabaseClient.getCurrentUser();
+                if (userResult.success) {
+                    const role = userResult.user.profile.role;
+                    if (role === 'admin') {
+                        window.location.href = '/admin/supabase-admin.html';
+                    } else if (role === 'agent') {
+                        window.location.href = '/agent-dashboard.html';
+                    } else {
+                        window.location.href = '/user-dashboard.html';
+                    }
+                }
+            }
         }
+
+        // Run auth check on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        // Handle OAuth redirect
+        window.addEventListener('hashchange', async () => {
+            if (window.location.hash.includes('access_token')) {
+                const { session } = await SupabaseClient.getSession();
+                if (session) {
+                    checkAuth();
+                }
+            }
+        });
     </script>
 </body>
 </html>
