@@ -61,10 +61,10 @@
             </form>
 
             <div class="mt-6 pt-6 border-t border-slate-200">
-                <p class="text-xs text-slate-500 text-center mb-3">Demo Hesap Bilgileri:</p>
+                <p class="text-xs text-slate-500 text-center mb-3">Demo Hesap:</p>
                 <div class="bg-slate-50 p-3 rounded-lg text-center">
                     <p class="text-sm font-mono text-slate-700"><strong>Kullanıcı:</strong> admin</p>
-                    <p class="text-sm font-mono text-slate-700"><strong>Şifre:</strong> fokus2024</p>
+                    <p class="text-sm font-mono text-slate-700"><strong>Şifre:</strong> 123</p>
                 </div>
             </div>
         </div>
@@ -90,9 +90,8 @@
             const username = form.username.value;
             const password = form.password.value;
 
-            // Demo login - Production'da API'ye gönderilecek
             setTimeout(() => {
-                if (username === 'admin' && password === 'fokus2024') {
+                if (username === 'admin' && password === '123') {
                     localStorage.setItem('admin_token', 'admin_' + Date.now());
                     localStorage.setItem('admin_user', JSON.stringify({
                         username: 'admin',
@@ -110,7 +109,7 @@
                     btn.disabled = false;
                     btn.innerHTML = originalText;
                 }
-            }, 1000);
+            }, 800);
         }
     </script>
 </body>

@@ -3,217 +3,605 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | FOKUS Emlak</title>
+    <title>FOKUS Emlak - Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+    </style>
 </head>
 <body class="bg-slate-50">
-    <div id="toast-container" class="fixed top-6 right-4 z-[70] flex flex-col gap-2"></div>
-    
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <div class="w-64 bg-gradient-to-b from-blue-900 to-slate-900 text-white p-6">
-            <div class="mb-8">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-blue-900 font-bold">F</div>
-                    <span class="text-xl font-bold">FOKUS Admin</span>
+    <!-- Header -->
+    <header class="bg-blue-900 text-white shadow-lg">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-house-laptop text-3xl text-blue-300"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">FOKUS Emlak Admin</h1>
+                        <p class="text-sm text-blue-200">Yönetim Paneli</p>
+                    </div>
                 </div>
-                <p class="text-sm text-blue-200">Yönetim Paneli</p>
-            </div>
-            
-            <nav class="space-y-2">
-                <a href="#dashboard" onclick="showTab('dashboard')" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fa-solid fa-chart-line"></i> Dashboard
-                </a>
-                <a href="#properties" onclick="showTab('properties')" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition bg-white/10">
-                    <i class="fa-solid fa-building"></i> İlanlar
-                </a>
-                <a href="#users" onclick="showTab('users')" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fa-solid fa-users"></i> Kullanıcılar
-                </a>
-                <a href="#analytics" onclick="showTab('analytics')" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fa-solid fa-chart-pie"></i> Analitik
-                </a>
-            </nav>
-            
-            <div class="absolute bottom-6 left-6 right-6">
-                <a href="/" class="block text-center text-sm text-blue-200 hover:text-white">
-                    <i class="fa-solid fa-arrow-left mr-2"></i> Siteye Dön
-                </a>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>Çıkış
+                </button>
             </div>
         </div>
-        
-        <!-- Main Content -->
-        <div class="flex-1 p-8">
-            <div class="mb-8 flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-slate-900">İlan Yönetimi</h1>
-                <button onclick="openAddPropertyModal()" class="bg-blue-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-800 transition">
-                    <i class="fa-solid fa-plus mr-2"></i> Yeni İlan
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <!-- Tab Headers -->
+            <div class="flex border-b border-slate-200">
+                <button onclick="switchTab('properties')"
+                        class="tab-btn flex-1 px-6 py-4 font-semibold text-lg transition hover:bg-slate-50 border-b-2 border-blue-600 text-blue-600"
+                        data-tab="properties">
+                    <i class="fa-solid fa-building mr-2"></i>İlan Yönetimi
+                </button>
+                <button onclick="switchTab('blogs')"
+                        class="tab-btn flex-1 px-6 py-4 font-semibold text-lg transition hover:bg-slate-50 border-b-2 border-transparent text-slate-600"
+                        data-tab="blogs">
+                    <i class="fa-solid fa-newspaper mr-2"></i>Blog Yönetimi
                 </button>
             </div>
-            
-            <!-- Stats -->
-            <div class="grid grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow border">
-                    <div class="text-3xl font-bold text-blue-900">24</div>
-                    <div class="text-slate-600 text-sm">Toplam İlan</div>
+
+            <!-- Properties Tab -->
+            <div id="properties-tab" class="tab-content active p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">İlanlar</h2>
+                    <button onclick="openPropertyModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fa-solid fa-plus mr-2"></i>Yeni İlan Ekle
+                    </button>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow border">
-                    <div class="text-3xl font-bold text-green-600">18</div>
-                    <div class="text-slate-600 text-sm">Aktif İlan</div>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow border">
-                    <div class="text-3xl font-bold text-amber-600">1.5K</div>
-                    <div class="text-slate-600 text-sm">Görüntülenme</div>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow border">
-                    <div class="text-3xl font-bold text-purple-600">89</div>
-                    <div class="text-slate-600 text-sm">Favori</div>
+
+                <!-- Properties Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Başlık</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Tür</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Fiyat</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Konum</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="properties-list" class="divide-y divide-slate-200">
+                            <!-- Properties will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            
-            <!-- Properties Table -->
-            <div class="bg-white rounded-xl shadow border">
-                <div class="p-6 border-b">
-                    <input type="text" placeholder="İlan ara..." class="w-full px-4 py-2 border rounded-lg">
+
+            <!-- Blogs Tab -->
+            <div id="blogs-tab" class="tab-content p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Blog Yazıları</h2>
+                    <button onclick="openBlogModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fa-solid fa-plus mr-2"></i>Yeni Blog Yazısı Ekle
+                    </button>
                 </div>
-                <table class="w-full">
-                    <thead class="bg-slate-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">İlan</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Konum</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Fiyat</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">Durum</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-slate-600 uppercase">İşlem</th>
-                        </tr>
-                    </thead>
-                    <tbody id="propertiesTable">
-                        <tr class="border-b hover:bg-slate-50">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <img src="https://images.unsplash.com/photo-1600596542815-2495db98dada?w=100" class="w-12 h-12 rounded-lg object-cover">
-                                    <div>
-                                        <div class="font-medium">İzmit Merkez 3+1</div>
-                                        <div class="text-xs text-slate-500">145 m²</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-600">İzmit, Kocaeli</td>
-                            <td class="px-6 py-4 font-bold text-blue-900">₺ 3.750.000</td>
-                            <td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">Aktif</span></td>
-                            <td class="px-6 py-4">
-                                <button class="text-blue-600 hover:text-blue-900 mr-3"><i class="fa-solid fa-edit"></i></button>
-                                <button class="text-red-600 hover:text-red-900"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+
+                <!-- Blogs Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Başlık</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Kategori</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Tarih</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Yazar</th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="blogs-list" class="divide-y divide-slate-200">
+                            <!-- Blogs will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Add Property Modal -->
-    <div id="addPropertyModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white">
-                <h2 class="text-2xl font-bold">Yeni İlan Ekle</h2>
-                <button onclick="closeAddPropertyModal()" class="text-slate-400 hover:text-slate-600">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
+    </main>
+
+    <!-- Property Modal -->
+    <div id="property-modal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-slate-800" id="property-modal-title">Yeni İlan Ekle</h3>
+                <button onclick="closePropertyModal()" class="text-slate-400 hover:text-slate-600 text-2xl">
+                    <i class="fa-solid fa-times"></i>
                 </button>
             </div>
-            <form id="addPropertyForm" onsubmit="handleAddProperty(event)" class="p-6 space-y-6">
-                <div class="grid grid-cols-2 gap-6">
+            <form id="property-form" class="p-6 space-y-4">
+                <input type="hidden" id="property-id">
+
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-bold mb-2">Başlık</label>
-                        <input type="text" name="title" required class="w-full px-4 py-2 border rounded-lg">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Başlık</label>
+                        <input type="text" id="property-title" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-sm font-bold mb-2">İşlem Tipi</label>
-                        <select name="operation" class="w-full px-4 py-2 border rounded-lg">
-                            <option>Satılık</option>
-                            <option>Kiralık</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-2">Fiyat (TL)</label>
-                        <input type="number" name="price" required class="w-full px-4 py-2 border rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-2">m²</label>
-                        <input type="number" name="area" required class="w-full px-4 py-2 border rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-2">Oda Sayısı</label>
-                        <select name="rooms" class="w-full px-4 py-2 border rounded-lg">
-                            <option>1+1</option>
-                            <option>2+1</option>
-                            <option>3+1</option>
-                            <option>4+1</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-2">Şehir</label>
-                        <select name="city" class="w-full px-4 py-2 border rounded-lg">
-                            <option>Kocaeli</option>
-                            <option>Samsun</option>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">İşlem Tipi</label>
+                        <select id="property-type" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="sale">Satılık</option>
+                            <option value="rent">Kiralık</option>
                         </select>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold mb-2">Açıklama</label>
-                    <textarea name="description" rows="4" class="w-full px-4 py-2 border rounded-lg"></textarea>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Fiyat (₺)</label>
+                        <input type="number" id="property-price" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Alan (m²)</label>
+                        <input type="number" id="property-area" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Oda Sayısı</label>
+                        <select id="property-rooms" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="1+0">1+0</option>
+                            <option value="1+1">1+1</option>
+                            <option value="2+1">2+1</option>
+                            <option value="3+1">3+1</option>
+                            <option value="4+1">4+1</option>
+                            <option value="5+1">5+1</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold mb-2">Video URL (YouTube)</label>
-                    <input type="url" name="videoUrl" placeholder="https://youtube.com/watch?v=..." class="w-full px-4 py-2 border rounded-lg">
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">İl</label>
+                        <input type="text" id="property-city" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">İlçe</label>
+                        <input type="text" id="property-district" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Mahalle</label>
+                        <input type="text" id="property-neighborhood" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
                 </div>
+
                 <div>
-                    <label class="block text-sm font-bold mb-2">Fotoğraflar</label>
-                    <input type="file" multiple accept="image/*" class="w-full px-4 py-2 border rounded-lg">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Açıklama</label>
+                    <textarea id="property-description" rows="4" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
-                <button type="submit" class="w-full bg-blue-900 text-white font-bold py-3 rounded-xl hover:bg-blue-800 transition">
-                    <i class="fa-solid fa-save mr-2"></i> İlanı Kaydet
-                </button>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Video URL (YouTube)</label>
+                    <input type="url" id="property-video" placeholder="https://www.youtube.com/watch?v=..." class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Fotoğraf URL'leri (her satıra bir URL)</label>
+                    <textarea id="property-photos" rows="4" placeholder="https://example.com/photo1.jpg&#10;https://example.com/photo2.jpg" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                    <p class="text-sm text-slate-500 mt-1">Her satıra bir fotoğraf URL'si yazın</p>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fa-solid fa-save mr-2"></i>Kaydet
+                    </button>
+                    <button type="button" onclick="closePropertyModal()" class="px-6 py-3 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50 transition">
+                        İptal
+                    </button>
+                </div>
             </form>
         </div>
     </div>
-    
-    <script src="/assets/js/main.js"></script>
+
+    <!-- Blog Modal -->
+    <div id="blog-modal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-slate-800" id="blog-modal-title">Yeni Blog Yazısı Ekle</h3>
+                <button onclick="closeBlogModal()" class="text-slate-400 hover:text-slate-600 text-2xl">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <form id="blog-form" class="p-6 space-y-4">
+                <input type="hidden" id="blog-id">
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Başlık</label>
+                    <input type="text" id="blog-title" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Kategori</label>
+                        <select id="blog-category" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="market">Piyasa Analizi</option>
+                            <option value="guide">Rehber</option>
+                            <option value="news">Haberler</option>
+                            <option value="investment">Yatırım</option>
+                            <option value="legal">Hukuki</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Yazar</label>
+                        <input type="text" id="blog-author" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Tarih</label>
+                        <input type="date" id="blog-date" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Özet</label>
+                    <textarea id="blog-excerpt" rows="2" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">İçerik</label>
+                    <textarea id="blog-content" rows="8" required class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Kapak Görseli URL</label>
+                    <input type="url" id="blog-image" required placeholder="https://example.com/image.jpg" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fa-solid fa-save mr-2"></i>Kaydet
+                    </button>
+                    <button type="button" onclick="closeBlogModal()" class="px-6 py-3 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50 transition">
+                        İptal
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        function showTab(tab) { console.log('Tab:', tab); }
-        function openAddPropertyModal() { document.getElementById('addPropertyModal').classList.remove('hidden'); }
-        function closeAddPropertyModal() { document.getElementById('addPropertyModal').classList.add('hidden'); }
-        
-        async function handleAddProperty(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData);
-            
-            try {
-                const response = await fetch('https://n8n.fokusistatistik.com/webhook/property/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                
-                if (response.ok) {
-                    showToast('İlan başarıyla eklendi!', 'success');
-                    closeAddPropertyModal();
-                    event.target.reset();
-                } else {
-                    throw new Error('İlan eklenemedi');
-                }
-            } catch (error) {
-                showToast('Bir hata oluştu: ' + error.message, 'error');
-            }
-        }
-        
-        // Check admin auth
-        if (!localStorage.getItem('admin_token')) {
+        // Check authentication
+        const adminToken = localStorage.getItem('admin_token');
+        if (!adminToken) {
             window.location.href = '/admin/login.html';
         }
+
+        // Initialize data storage
+        if (!localStorage.getItem('properties')) {
+            localStorage.setItem('properties', JSON.stringify([
+                {
+                    id: '1',
+                    title: 'Modern 3+1 Daire - Kadıköy',
+                    type: 'sale',
+                    price: 4500000,
+                    area: 135,
+                    rooms: '3+1',
+                    city: 'İstanbul',
+                    district: 'Kadıköy',
+                    neighborhood: 'Fenerbahçe',
+                    description: 'Deniz manzaralı, yeni yapılmış lüks daire. Tam donanımlı mutfak, akıllı ev sistemi.',
+                    video: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                    photos: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800', 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800']
+                }
+            ]));
+        }
+
+        if (!localStorage.getItem('blogs')) {
+            localStorage.setItem('blogs', JSON.stringify([
+                {
+                    id: '1',
+                    title: '2024 Türkiye Konut Piyasası Analizi',
+                    category: 'market',
+                    author: 'Ahmet Yılmaz',
+                    date: '2024-01-15',
+                    excerpt: 'Türkiye konut piyasasında son trendler ve 2024 yılı tahminleri.',
+                    content: 'Türkiye konut piyasası 2024 yılında önemli değişimler yaşamaya devam ediyor...',
+                    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800'
+                }
+            ]));
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-blue-600', 'text-blue-600');
+                el.classList.add('border-transparent', 'text-slate-600');
+            });
+
+            document.getElementById(tab + '-tab').classList.add('active');
+            document.querySelector(`[data-tab="${tab}"]`).classList.remove('border-transparent', 'text-slate-600');
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('border-blue-600', 'text-blue-600');
+        }
+
+        // Load Properties
+        function loadProperties() {
+            const properties = JSON.parse(localStorage.getItem('properties') || '[]');
+            const tbody = document.getElementById('properties-list');
+
+            if (properties.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">Henüz ilan bulunmuyor</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = properties.map(prop => `
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 font-medium text-slate-800">${prop.title}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm">${prop.type === 'sale' ? 'Satılık' : 'Kiralık'}</span></td>
+                    <td class="px-4 py-3 font-semibold text-blue-600">${prop.price.toLocaleString('tr-TR')} ₺</td>
+                    <td class="px-4 py-3 text-slate-600">${prop.city}, ${prop.district}</td>
+                    <td class="px-4 py-3">
+                        <button onclick="editProperty('${prop.id}')" class="text-blue-600 hover:text-blue-700 mr-3">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button onclick="deleteProperty('${prop.id}')" class="text-red-600 hover:text-red-700">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Load Blogs
+        function loadBlogs() {
+            const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
+            const tbody = document.getElementById('blogs-list');
+
+            if (blogs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">Henüz blog yazısı bulunmuyor</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = blogs.map(blog => `
+                <tr class="hover:bg-slate-50">
+                    <td class="px-4 py-3 font-medium text-slate-800">${blog.title}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 bg-purple-100 text-purple-700 rounded text-sm">${getCategoryName(blog.category)}</span></td>
+                    <td class="px-4 py-3 text-slate-600">${new Date(blog.date).toLocaleDateString('tr-TR')}</td>
+                    <td class="px-4 py-3 text-slate-600">${blog.author}</td>
+                    <td class="px-4 py-3">
+                        <button onclick="editBlog('${blog.id}')" class="text-blue-600 hover:text-blue-700 mr-3">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button onclick="deleteBlog('${blog.id}')" class="text-red-600 hover:text-red-700">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'market': 'Piyasa Analizi',
+                'guide': 'Rehber',
+                'news': 'Haberler',
+                'investment': 'Yatırım',
+                'legal': 'Hukuki'
+            };
+            return categories[category] || category;
+        }
+
+        // Property Modal Functions
+        function openPropertyModal(id = null) {
+            const modal = document.getElementById('property-modal');
+            const form = document.getElementById('property-form');
+            const title = document.getElementById('property-modal-title');
+
+            form.reset();
+
+            if (id) {
+                const properties = JSON.parse(localStorage.getItem('properties') || '[]');
+                const property = properties.find(p => p.id === id);
+
+                if (property) {
+                    title.textContent = 'İlanı Düzenle';
+                    document.getElementById('property-id').value = property.id;
+                    document.getElementById('property-title').value = property.title;
+                    document.getElementById('property-type').value = property.type;
+                    document.getElementById('property-price').value = property.price;
+                    document.getElementById('property-area').value = property.area;
+                    document.getElementById('property-rooms').value = property.rooms;
+                    document.getElementById('property-city').value = property.city;
+                    document.getElementById('property-district').value = property.district;
+                    document.getElementById('property-neighborhood').value = property.neighborhood || '';
+                    document.getElementById('property-description').value = property.description;
+                    document.getElementById('property-video').value = property.video || '';
+                    document.getElementById('property-photos').value = (property.photos || []).join('\n');
+                }
+            } else {
+                title.textContent = 'Yeni İlan Ekle';
+                document.getElementById('property-id').value = '';
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closePropertyModal() {
+            document.getElementById('property-modal').classList.remove('active');
+        }
+
+        function editProperty(id) {
+            openPropertyModal(id);
+        }
+
+        function deleteProperty(id) {
+            if (confirm('Bu ilanı silmek istediğinizden emin misiniz?')) {
+                let properties = JSON.parse(localStorage.getItem('properties') || '[]');
+                properties = properties.filter(p => p.id !== id);
+                localStorage.setItem('properties', JSON.stringify(properties));
+                loadProperties();
+                showToast('İlan başarıyla silindi', 'success');
+            }
+        }
+
+        // Blog Modal Functions
+        function openBlogModal(id = null) {
+            const modal = document.getElementById('blog-modal');
+            const form = document.getElementById('blog-form');
+            const title = document.getElementById('blog-modal-title');
+
+            form.reset();
+
+            if (id) {
+                const blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
+                const blog = blogs.find(b => b.id === id);
+
+                if (blog) {
+                    title.textContent = 'Blog Yazısını Düzenle';
+                    document.getElementById('blog-id').value = blog.id;
+                    document.getElementById('blog-title').value = blog.title;
+                    document.getElementById('blog-category').value = blog.category;
+                    document.getElementById('blog-author').value = blog.author;
+                    document.getElementById('blog-date').value = blog.date;
+                    document.getElementById('blog-excerpt').value = blog.excerpt;
+                    document.getElementById('blog-content').value = blog.content;
+                    document.getElementById('blog-image').value = blog.image;
+                }
+            } else {
+                title.textContent = 'Yeni Blog Yazısı Ekle';
+                document.getElementById('blog-id').value = '';
+                document.getElementById('blog-date').value = new Date().toISOString().split('T')[0];
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeBlogModal() {
+            document.getElementById('blog-modal').classList.remove('active');
+        }
+
+        function editBlog(id) {
+            openBlogModal(id);
+        }
+
+        function deleteBlog(id) {
+            if (confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')) {
+                let blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
+                blogs = blogs.filter(b => b.id !== id);
+                localStorage.setItem('blogs', JSON.stringify(blogs));
+                loadBlogs();
+                showToast('Blog yazısı başarıyla silindi', 'success');
+            }
+        }
+
+        // Form Submissions
+        document.getElementById('property-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('property-id').value || Date.now().toString();
+            const photos = document.getElementById('property-photos').value
+                .split('\n')
+                .map(url => url.trim())
+                .filter(url => url.length > 0);
+
+            const property = {
+                id: id,
+                title: document.getElementById('property-title').value,
+                type: document.getElementById('property-type').value,
+                price: parseInt(document.getElementById('property-price').value),
+                area: parseInt(document.getElementById('property-area').value),
+                rooms: document.getElementById('property-rooms').value,
+                city: document.getElementById('property-city').value,
+                district: document.getElementById('property-district').value,
+                neighborhood: document.getElementById('property-neighborhood').value,
+                description: document.getElementById('property-description').value,
+                video: document.getElementById('property-video').value,
+                photos: photos
+            };
+
+            let properties = JSON.parse(localStorage.getItem('properties') || '[]');
+            const index = properties.findIndex(p => p.id === id);
+
+            if (index >= 0) {
+                properties[index] = property;
+                showToast('İlan başarıyla güncellendi', 'success');
+            } else {
+                properties.push(property);
+                showToast('İlan başarıyla eklendi', 'success');
+            }
+
+            localStorage.setItem('properties', JSON.stringify(properties));
+            loadProperties();
+            closePropertyModal();
+        });
+
+        document.getElementById('blog-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('blog-id').value || Date.now().toString();
+
+            const blog = {
+                id: id,
+                title: document.getElementById('blog-title').value,
+                category: document.getElementById('blog-category').value,
+                author: document.getElementById('blog-author').value,
+                date: document.getElementById('blog-date').value,
+                excerpt: document.getElementById('blog-excerpt').value,
+                content: document.getElementById('blog-content').value,
+                image: document.getElementById('blog-image').value
+            };
+
+            let blogs = JSON.parse(localStorage.getItem('blogs') || '[]');
+            const index = blogs.findIndex(b => b.id === id);
+
+            if (index >= 0) {
+                blogs[index] = blog;
+                showToast('Blog yazısı başarıyla güncellendi', 'success');
+            } else {
+                blogs.push(blog);
+                showToast('Blog yazısı başarıyla eklendi', 'success');
+            }
+
+            localStorage.setItem('blogs', JSON.stringify(blogs));
+            loadBlogs();
+            closeBlogModal();
+        });
+
+        // Logout
+        function logout() {
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                localStorage.removeItem('admin_token');
+                localStorage.removeItem('admin_user');
+                window.location.href = '/admin/login.html';
+            }
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                info: 'bg-blue-500'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300`;
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Close modals on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePropertyModal();
+                closeBlogModal();
+            }
+        });
+
+        // Initialize
+        loadProperties();
+        loadBlogs();
     </script>
 </body>
 </html>
