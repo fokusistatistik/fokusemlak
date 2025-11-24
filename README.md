@@ -21,6 +21,25 @@ Modern, responsive ve yapay zeka destekli yeni nesil emlak danışmanlık web si
 - **Favoriler**: İlan kaydetme sistemi
 - **Yol Arkadaşım**: Süreç takip sistemi
 
+### 🤖 Chatbot (FOKUS216)
+- **Iframe Entegrasyonu**: `asistan.fokusistatistik.com` üzerinden chatbot
+- **Pulse Animasyon**: Her 10 saniyede dikkat çekici animasyon
+- **Mobil Uyumlu**: Mobilde tam ekran, desktopda 350x500px
+- **Toggle Interface**: Açma/kapama ile kolay kullanım
+
+### 👨‍💼 Admin Paneli
+- **İlan Yönetimi**: CRUD işlemleri (Ekle/Düzenle/Sil)
+- **Blog Yönetimi**: Blog yazıları için tam kontrol
+- **LocalStorage**: İstemci tarafı veri saklama
+- **Basit Giriş**: admin/123 ile hızlı erişim
+- **Mobil Uyumlu**: Responsive tasarım
+
+### 📱 Progressive Web App (PWA)
+- **Offline Çalışma**: Service Worker ile çevrimdışı destek
+- **Yüklenebilir**: Ana ekrana eklenebilir
+- **Push Bildirimleri**: Anlık bildirim desteği
+- **App-like Deneyim**: Tam ekran uygulama hissi
+
 ## 📁 Proje Yapısı
 
 ```
@@ -38,14 +57,24 @@ fokusemlak/
 ├── blog-detail.html        # Blog detay
 ├── privacy.html            # KVKK & Gizlilik
 ├── terms.html              # Kullanım koşulları
+├── offline.html            # PWA offline sayfası
+├── manifest.json           # PWA manifest
+├── sw.js                   # Service Worker
+├── admin/
+│   ├── index.html          # Admin panel
+│   └── login.html          # Admin girişi
 └── assets/
     ├── css/
     │   └── style.css       # Özel stiller
     ├── js/
     │   ├── api.js          # API entegrasyonu
     │   ├── auth.js         # Kimlik doğrulama
-    │   └── main.js         # Ana JavaScript
-    └── img/                # Görseller
+    │   ├── main.js         # Ana JavaScript
+    │   ├── chatbot.js      # FOKUS216 chatbot widget
+    │   └── pwa.js          # PWA özellikleri
+    └── img/
+        ├── fokus216kare.png  # Chatbot ikonu
+        └── icon-*.png        # PWA ikonları
 ```
 
 ## 🔌 Backend Entegrasyonu (n8n)
@@ -131,6 +160,32 @@ const API = {
 ```javascript
 client_id: 'YOUR_GOOGLE_CLIENT_ID'
 ```
+
+### Chatbot Konfigürasyonu
+`/assets/js/chatbot.js` dosyasında:
+```javascript
+// Chatbot iframe URL
+src="https://asistan.fokusistatistik.com/chatbot216.html"
+
+// İkon görseli
+src="/assets/img/fokus216kare.png"
+
+// Pulse animasyon ayarları
+setTimeout(() => pulseIcon(), 3000);  // 3 saniye sonra başla
+setInterval(pulseIcon, 10000);        // Her 10 saniyede tekrarla
+```
+
+### Admin Panel
+**Giriş Bilgileri:**
+- URL: `/admin/login.html` veya `/admin/index.html`
+- Kullanıcı: `admin`
+- Şifre: `123`
+
+**Özellikler:**
+- İlan ekleme/düzenleme/silme
+- Blog yazısı yönetimi
+- Veriler LocalStorage'da saklanır
+- Mobil uyumlu arayüz
 
 ## 🧪 Test Modu
 
@@ -270,4 +325,32 @@ Bu proje Claude AI ile geliştirilmiştir.
 Tüm backend işlemleri n8n webhook entegrasyonu ile yapılmaktadır.
 Production'a geçmeden önce test edilmelidir.
 
-Son Güncelleme: 23 Kasım 2024
+## 🔄 Son Güncellemeler
+
+### 24 Kasım 2024
+- ✅ **Chatbot İyileştirmesi**: FOKUS216 iframe-based chatbot entegrasyonu
+  - Basitleştirilmiş kod yapısı (1051 satırdan 153 satıra)
+  - External chatbot servisi: `asistan.fokusistatistik.com`
+  - Pulse animasyonu ve hover efektleri
+  - Mobil tam ekran desteği
+
+- ✅ **Mobil Uyumluluk**: Tüm platformda responsive tasarım
+  - Admin panel: Mobil uyumlu tablo ve form yapısı
+  - WhatsApp butonu: Responsive boyutlandırma
+  - Chatbot: Mobilde tam ekran, desktopda sabit boyut
+
+- ✅ **Admin Panel**: Kapsamlı yönetim arayüzü
+  - İki tab yapısı (İlanlar / Blog)
+  - CRUD işlemleri
+  - LocalStorage veri yönetimi
+  - Basit kimlik doğrulama (admin/123)
+
+### 23 Kasım 2024
+- ✅ PWA özellikleri (Offline, Push notifications)
+- ✅ Service Worker implementasyonu
+- ✅ Manifest.json ve uygulama ikonları
+- ✅ Kapsamlı blog sistemi
+- ✅ İlan detay sayfaları
+- ✅ Süreç takip sistemi
+
+Son Güncelleme: 24 Kasım 2024
