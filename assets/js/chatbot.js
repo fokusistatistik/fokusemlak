@@ -24,13 +24,13 @@ const FokusChat = {
     createWidget() {
         const chatHTML = `
             <!-- Chat Toggle Button -->
-            <button id="chat-toggle-btn" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-blue-900 to-blue-700 text-white rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center group">
-                <i class="fa-solid fa-comments text-2xl group-hover:scale-110 transition-transform"></i>
-                <span id="chat-unread-badge" class="hidden absolute -top-1 -right-1 w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">0</span>
+            <button id="chat-toggle-btn" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-900 to-blue-700 text-white rounded-full shadow-2xl hover:scale-110 transition-all duration-300 z-50 flex items-center justify-center group">
+                <i class="fa-solid fa-comments text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                <span id="chat-unread-badge" class="hidden absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">0</span>
             </button>
 
             <!-- Chat Modal -->
-            <div id="chat-modal" class="hidden fixed bottom-24 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-blue-900 animate-slide-up">
+            <div id="chat-modal" class="hidden fixed bottom-20 sm:bottom-24 right-0 sm:right-6 left-0 sm:left-auto w-full sm:w-96 h-[calc(100vh-6rem)] sm:h-[600px] bg-white sm:rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-t-2 sm:border-2 border-blue-900 animate-slide-up">
                 <!-- Header -->
                 <div class="bg-gradient-to-r from-blue-900 to-slate-900 text-white p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -66,33 +66,33 @@ const FokusChat = {
                     </div>
 
                     <!-- Template Buttons -->
-                    <div id="chat-templates" class="grid grid-cols-2 gap-2">
+                    <div id="chat-templates" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         ${this.templates.map(t => `
                             <button onclick="FokusChat.sendTemplate('${t.text}')" class="bg-white hover:bg-blue-50 border-2 border-slate-200 hover:border-blue-900 rounded-xl p-3 text-left transition-all duration-200 group">
                                 <div class="text-2xl mb-1">${t.icon}</div>
-                                <div class="text-xs font-medium text-slate-700 group-hover:text-blue-900">${t.text}</div>
+                                <div class="text-xs sm:text-sm font-medium text-slate-700 group-hover:text-blue-900">${t.text}</div>
                             </button>
                         `).join('')}
                     </div>
                 </div>
 
                 <!-- Input Area -->
-                <div class="p-4 bg-white border-t border-slate-200">
+                <div class="p-3 sm:p-4 bg-white border-t border-slate-200">
                     <div class="flex gap-2">
                         <input
                             type="text"
                             id="chat-input"
                             placeholder="Mesajınızı yazın..."
-                            class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 text-sm"
+                            class="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-900 text-sm"
                             onkeypress="if(event.key==='Enter') FokusChat.sendMessage()"
                         >
-                        <button onclick="FokusChat.sendMessage()" class="w-12 h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-xl flex items-center justify-center transition">
-                            <i class="fa-solid fa-paper-plane"></i>
+                        <button onclick="FokusChat.sendMessage()" class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-900 hover:bg-blue-800 text-white rounded-xl flex items-center justify-center transition">
+                            <i class="fa-solid fa-paper-plane text-sm sm:text-base"></i>
                         </button>
                     </div>
                     <div class="flex items-center justify-between mt-2 text-xs text-slate-400">
-                        <span>Powered by AI</span>
-                        <a href="https://wa.me/908505550000" target="_blank" class="text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
+                        <span class="text-[10px] sm:text-xs">Powered by AI</span>
+                        <a href="https://wa.me/908505550000" target="_blank" class="text-green-600 hover:text-green-700 font-medium flex items-center gap-1 text-[10px] sm:text-xs">
                             <i class="fa-brands fa-whatsapp"></i> WhatsApp
                         </a>
                     </div>
