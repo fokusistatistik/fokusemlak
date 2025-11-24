@@ -598,6 +598,14 @@
             }
 
             localStorage.setItem('properties', JSON.stringify(properties));
+
+            // Sync to n8n webhook
+            fetch('https://n8n.fokusistatistik.com/webhook/admin/property/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(property)
+            }).catch(err => console.warn('Webhook sync failed:', err));
+
             loadProperties();
             closePropertyModal();
         });
@@ -630,6 +638,14 @@
             }
 
             localStorage.setItem('blogs', JSON.stringify(blogs));
+
+            // Sync to n8n webhook
+            fetch('https://n8n.fokusistatistik.com/webhook/admin/blog/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(blog)
+            }).catch(err => console.warn('Webhook sync failed:', err));
+
             loadBlogs();
             closeBlogModal();
         });
