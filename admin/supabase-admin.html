@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOKUS Emlak - Supabase Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #2563eb;
+            background: #dbeafe;
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+<!-- Loading Screen -->
+<div id="loading-screen" class="fixed inset-0 bg-blue-900 flex items-center justify-center z-50">
+    <div class="text-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-white mx-auto mb-4"></div>
+        <p class="text-white text-xl font-bold">FOKUS Emlak Admin</p>
+        <p class="text-blue-200 text-sm mt-2">Supabase ile çalışıyor...</p>
+    </div>
+</div>
+
+<!-- Login Screen -->
+<div id="login-screen" class="hidden fixed inset-0 bg-slate-900 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Admin Girişi</h1>
+            <p class="text-slate-600">Supabase kimlik doğrulama</p>
+        </div>
+
+        <form id="login-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                <input type="email" id="login-email" required
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Şifre</label>
+                <input type="password" id="login-password" required
+                       class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800 transition">
+                <i class="fa-solid fa-sign-in mr-2"></i> Giriş Yap
+            </button>
+        </form>
+
+        <div id="login-error" class="hidden mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"></div>
+    </div>
+</div>
+
+<!-- Main Admin Panel -->
+<div id="admin-panel" class="hidden">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <h1 class="text-2xl font-bold">FOKUS Emlak Admin</h1>
+                    <span class="px-3 py-1 bg-green-500 text-xs rounded-full font-bold">
+                        <i class="fa-solid fa-database mr-1"></i> Supabase
+                    </span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span id="user-email" class="text-sm text-blue-200"></span>
+                    <button onclick="AdminPanel.signOut()" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition">
+                        <i class="fa-solid fa-sign-out"></i> Çıkış
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Dashboard Stats -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-600 text-sm">Toplam İlan</p>
+                        <p id="stat-properties" class="text-3xl font-bold text-blue-900">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-home text-blue-900 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-600 text-sm">Blog Yazıları</p>
+                        <p id="stat-blogs" class="text-3xl font-bold text-green-600">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-newspaper text-green-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-600 text-sm">Bekleyen Lead</p>
+                        <p id="stat-leads" class="text-3xl font-bold text-amber-600">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-users text-amber-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-slate-600 text-sm">Toplam Görüntüleme</p>
+                        <p id="stat-views" class="text-3xl font-bold text-purple-600">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-eye text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white rounded-xl shadow-lg mb-6">
+            <div class="flex border-b border-slate-200 overflow-x-auto">
+                <button onclick="AdminPanel.switchTab('properties')" data-tab="properties" class="tab-button px-6 py-4 font-medium text-blue-900 border-b-2 border-blue-900">
+                    <i class="fa-solid fa-home mr-2"></i> İlanlar
+                </button>
+                <button onclick="AdminPanel.switchTab('blogs')" data-tab="blogs" class="tab-button px-6 py-4 font-medium text-slate-600 hover:text-blue-900">
+                    <i class="fa-solid fa-newspaper mr-2"></i> Blog Yazıları
+                </button>
+                <button onclick="AdminPanel.switchTab('leads')" data-tab="leads" class="tab-button px-6 py-4 font-medium text-slate-600 hover:text-blue-900">
+                    <i class="fa-solid fa-users mr-2"></i> Leadler
+                </button>
+            </div>
+
+            <!-- Properties Tab -->
+            <div id="properties-tab" class="tab-content active p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800">Emlak İlanları</h2>
+                    <button onclick="AdminPanel.showPropertyModal()" class="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800">
+                        <i class="fa-solid fa-plus mr-2"></i> Yeni İlan
+                    </button>
+                </div>
+
+                <div id="properties-list" class="space-y-4">
+                    <!-- Properties will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Blogs Tab -->
+            <div id="blogs-tab" class="tab-content p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-800">Blog Yazıları</h2>
+                    <button onclick="AdminPanel.showBlogModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                        <i class="fa-solid fa-plus mr-2"></i> Yeni Blog
+                    </button>
+                </div>
+
+                <div id="blogs-list" class="space-y-4">
+                    <!-- Blogs will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Leads Tab -->
+            <div id="leads-tab" class="tab-content p-6">
+                <h2 class="text-xl font-bold text-slate-800 mb-4">Müşteri Leadleri</h2>
+
+                <div id="leads-list" class="space-y-4">
+                    <!-- Leads will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Property Modal -->
+<div id="property-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 p-4 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+            <h3 class="text-xl font-bold text-slate-800">
+                <i class="fa-solid fa-home mr-2 text-blue-900"></i>
+                <span id="property-modal-title">Yeni İlan</span>
+            </h3>
+            <button onclick="AdminPanel.closePropertyModal()" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <form id="property-form" class="p-6 space-y-6">
+            <input type="hidden" id="property-id">
+
+            <!-- Basic Info -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">İlan Başlığı *</label>
+                    <input type="text" id="property-title" required
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Açıklama</label>
+                    <textarea id="property-description" rows="4"
+                              class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">İşlem Tipi *</label>
+                    <select id="property-transaction" required
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="Satılık">Satılık</option>
+                        <option value="Kiralık">Kiralık</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Emlak Tipi *</label>
+                    <select id="property-type" required
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="Daire">Daire</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Arsa">Arsa</option>
+                        <option value="İşyeri">İşyeri</option>
+                        <option value="Ofis">Ofis</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Fiyat (₺) *</label>
+                    <input type="number" id="property-price" required
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Oda Sayısı</label>
+                    <select id="property-rooms"
+                            class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Seçiniz</option>
+                        <option value="1+0">1+0</option>
+                        <option value="1+1">1+1</option>
+                        <option value="2+1">2+1</option>
+                        <option value="3+1">3+1</option>
+                        <option value="4+1">4+1</option>
+                        <option value="5+1">5+1</option>
+                        <option value="6+1">6+1</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Şehir *</label>
+                    <input type="text" id="property-city" required
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">İlçe *</label>
+                    <input type="text" id="property-district" required
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Brüt Alan (m²)</label>
+                    <input type="number" id="property-area-gross"
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Net Alan (m²)</label>
+                    <input type="number" id="property-area-net"
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Image Upload -->
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Fotoğraflar</label>
+                <div class="upload-area" id="upload-area">
+                    <i class="fa-solid fa-cloud-upload text-4xl text-slate-400 mb-2"></i>
+                    <p class="text-slate-600">Fotoğrafları sürükleyin veya tıklayın</p>
+                    <input type="file" id="property-photos" multiple accept="image/*" class="hidden">
+                </div>
+                <div id="image-preview-container" class="flex flex-wrap gap-2 mt-4"></div>
+            </div>
+
+            <!-- Status -->
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" id="property-published" class="w-5 h-5 text-blue-600">
+                    <span class="text-sm font-medium text-slate-700">Yayınla</span>
+                </label>
+
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" id="property-featured" class="w-5 h-5 text-amber-600">
+                    <span class="text-sm font-medium text-slate-700">Öne Çıkan</span>
+                </label>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-blue-900 text-white py-3 rounded-lg font-bold hover:bg-blue-800">
+                    <i class="fa-solid fa-save mr-2"></i> Kaydet
+                </button>
+                <button type="button" onclick="AdminPanel.closePropertyModal()" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-lg font-bold hover:bg-slate-300">
+                    İptal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Blog Modal -->
+<div id="blog-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 p-4 overflow-y-auto">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto">
+        <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+            <h3 class="text-xl font-bold text-slate-800">
+                <i class="fa-solid fa-newspaper mr-2 text-green-600"></i>
+                <span id="blog-modal-title">Yeni Blog Yazısı</span>
+            </h3>
+            <button onclick="AdminPanel.closeBlogModal()" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <form id="blog-form" class="p-6 space-y-6">
+            <input type="hidden" id="blog-id">
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Başlık *</label>
+                <input type="text" id="blog-title" required
+                       class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Kategori *</label>
+                <select id="blog-category" required
+                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="Piyasa Analizi">Piyasa Analizi</option>
+                    <option value="Yatırım Rehberi">Yatırım Rehberi</option>
+                    <option value="Hukuki Süreçler">Hukuki Süreçler</option>
+                    <option value="Dekorasyon">Dekorasyon</option>
+                    <option value="Şehir Rehberi">Şehir Rehberi</option>
+                    <option value="Haberler">Haberler</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">İçerik *</label>
+                <textarea id="blog-content" rows="10" required
+                          class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Yazar Adı *</label>
+                <input type="text" id="blog-author" required
+                       class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" id="blog-published" class="w-5 h-5 text-green-600">
+                    <span class="text-sm font-medium text-slate-700">Yayınla</span>
+                </label>
+
+                <label class="flex items-center gap-2">
+                    <input type="checkbox" id="blog-featured" class="w-5 h-5 text-amber-600">
+                    <span class="text-sm font-medium text-slate-700">Öne Çıkan</span>
+                </label>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">
+                    <i class="fa-solid fa-save mr-2"></i> Kaydet
+                </button>
+                <button type="button" onclick="AdminPanel.closeBlogModal()" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-lg font-bold hover:bg-slate-300">
+                    İptal
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="../assets/js/supabase-client.js"></script>
+<script>
+// Admin Panel Controller
+const AdminPanel = {
+    currentTab: 'properties',
+    currentProperty: null,
+    currentBlog: null,
+    uploadedImages: [],
+
+    async init() {
+        console.log('[Admin] Initializing...');
+
+        // Wait for Supabase client to initialize
+        await SupabaseClient.init();
+
+        // Check authentication
+        const { session } = await SupabaseClient.getSession();
+
+        if (!session) {
+            this.showLoginScreen();
+        } else {
+            await this.showAdminPanel(session);
+        }
+
+        // Setup event listeners
+        this.setupEventListeners();
+    },
+
+    showLoginScreen() {
+        document.getElementById('loading-screen').classList.add('hidden');
+        document.getElementById('login-screen').classList.remove('hidden');
+    },
+
+    async showAdminPanel(session) {
+        document.getElementById('user-email').textContent = session.user.email;
+        document.getElementById('loading-screen').classList.add('hidden');
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+
+        // Load dashboard data
+        await this.loadDashboard();
+        await this.loadProperties();
+    },
+
+    setupEventListeners() {
+        // Login form
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.handleLogin();
+        });
+
+        // Property form
+        document.getElementById('property-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.saveProperty();
+        });
+
+        // Blog form
+        document.getElementById('blog-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await this.saveBlog();
+        });
+
+        // Image upload
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('property-photos');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => this.handleFileSelect(e.target.files));
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            this.handleFileSelect(e.dataTransfer.files);
+        });
+    },
+
+    async handleLogin() {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        const result = await SupabaseClient.signIn(email, password);
+
+        if (result.success) {
+            await this.showAdminPanel(result.session);
+        } else {
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.textContent = 'Giriş başarısız: ' + result.error;
+            errorDiv.classList.remove('hidden');
+        }
+    },
+
+    async signOut() {
+        await SupabaseClient.signOut();
+        location.reload();
+    },
+
+    async loadDashboard() {
+        const summary = await SupabaseClient.getDashboardSummary();
+
+        if (summary.success) {
+            document.getElementById('stat-properties').textContent = summary.data.totalProperties;
+            document.getElementById('stat-blogs').textContent = summary.data.totalBlogs;
+            document.getElementById('stat-leads').textContent = summary.data.totalLeads;
+        }
+    },
+
+    switchTab(tab) {
+        // Update buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('text-blue-900', 'border-b-2', 'border-blue-900');
+            btn.classList.add('text-slate-600');
+        });
+
+        const activeBtn = document.querySelector(`[data-tab="${tab}"]`);
+        activeBtn.classList.add('text-blue-900', 'border-b-2', 'border-blue-900');
+        activeBtn.classList.remove('text-slate-600');
+
+        // Update content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${tab}-tab`).classList.add('active');
+
+        this.currentTab = tab;
+
+        // Load data
+        if (tab === 'properties') this.loadProperties();
+        else if (tab === 'blogs') this.loadBlogs();
+        else if (tab === 'leads') this.loadLeads();
+    },
+
+    async loadProperties() {
+        const result = await SupabaseClient.fetchProperties({ limit: 100 });
+
+        if (!result.success) return;
+
+        const container = document.getElementById('properties-list');
+
+        if (result.data.length === 0) {
+            container.innerHTML = '<p class="text-center text-slate-500 py-8">Henüz ilan yok</p>';
+            return;
+        }
+
+        container.innerHTML = result.data.map(property => `
+            <div class="bg-white rounded-lg shadow p-4 flex items-center justify-between">
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800">${property.title}</h3>
+                    <p class="text-sm text-slate-600">${property.city}, ${property.district} • ${property.rooms || '-'}</p>
+                    <p class="text-lg font-bold text-blue-900 mt-2">₺${property.price.toLocaleString('tr-TR')}</p>
+                    <div class="flex gap-2 mt-2">
+                        ${property.published ? '<span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Yayında</span>' : '<span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">Taslak</span>'}
+                        ${property.featured ? '<span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full">Öne Çıkan</span>' : ''}
+                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">${property.view_count || 0} görüntüleme</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="AdminPanel.editProperty('${property.id}')" class="px-4 py-2 bg-blue-100 text-blue-900 rounded-lg hover:bg-blue-200">
+                        <i class="fa-solid fa-edit"></i>
+                    </button>
+                    <button onclick="AdminPanel.deleteProperty('${property.id}')" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    async loadBlogs() {
+        const result = await SupabaseClient.fetchBlogs({ limit: 100 });
+
+        if (!result.success) return;
+
+        const container = document.getElementById('blogs-list');
+
+        if (result.data.length === 0) {
+            container.innerHTML = '<p class="text-center text-slate-500 py-8">Henüz blog yazısı yok</p>';
+            return;
+        }
+
+        container.innerHTML = result.data.map(blog => `
+            <div class="bg-white rounded-lg shadow p-4 flex items-center justify-between">
+                <div class="flex-1">
+                    <h3 class="font-bold text-slate-800">${blog.title}</h3>
+                    <p class="text-sm text-slate-600">${blog.category} • ${blog.author_name}</p>
+                    <div class="flex gap-2 mt-2">
+                        ${blog.published ? '<span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">Yayında</span>' : '<span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full">Taslak</span>'}
+                        <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">${blog.view_count || 0} okunma</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="AdminPanel.editBlog('${blog.id}')" class="px-4 py-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200">
+                        <i class="fa-solid fa-edit"></i>
+                    </button>
+                    <button onclick="AdminPanel.deleteBlog('${blog.id}')" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    },
+
+    async loadLeads() {
+        const result = await SupabaseClient.fetchLeads({ limit: 50 });
+
+        if (!result.success) return;
+
+        const container = document.getElementById('leads-list');
+
+        if (result.data.length === 0) {
+            container.innerHTML = '<p class="text-center text-slate-500 py-8">Henüz lead yok</p>';
+            return;
+        }
+
+        container.innerHTML = result.data.map(lead => `
+            <div class="bg-white rounded-lg shadow p-4">
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <h3 class="font-bold text-slate-800">${lead.full_name}</h3>
+                        <p class="text-sm text-slate-600">${lead.email} • ${lead.phone}</p>
+                    </div>
+                    <span class="px-3 py-1 ${lead.status === 'new' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'} text-xs rounded-full font-bold">
+                        ${lead.status.toUpperCase()}
+                    </span>
+                </div>
+                <p class="text-sm text-slate-700 mb-2">${lead.message || 'Mesaj yok'}</p>
+                <p class="text-xs text-slate-500">Kaynak: ${lead.source} • ${new Date(lead.created_at).toLocaleDateString('tr-TR')}</p>
+            </div>
+        `).join('');
+    },
+
+    showPropertyModal(propertyId = null) {
+        this.currentProperty = propertyId;
+        document.getElementById('property-modal').classList.add('active');
+
+        if (propertyId) {
+            this.loadPropertyData(propertyId);
+        } else {
+            document.getElementById('property-form').reset();
+            document.getElementById('property-id').value = '';
+        }
+    },
+
+    closePropertyModal() {
+        document.getElementById('property-modal').classList.remove('active');
+        this.uploadedImages = [];
+    },
+
+    showBlogModal(blogId = null) {
+        this.currentBlog = blogId;
+        document.getElementById('blog-modal').classList.add('active');
+
+        if (blogId) {
+            this.loadBlogData(blogId);
+        } else {
+            document.getElementById('blog-form').reset();
+            document.getElementById('blog-id').value = '';
+        }
+    },
+
+    closeBlogModal() {
+        document.getElementById('blog-modal').classList.remove('active');
+    },
+
+    async saveProperty() {
+        const propertyData = {
+            title: document.getElementById('property-title').value,
+            description: document.getElementById('property-description').value,
+            transaction_type: document.getElementById('property-transaction').value,
+            property_type: document.getElementById('property-type').value,
+            price: parseFloat(document.getElementById('property-price').value),
+            rooms: document.getElementById('property-rooms').value,
+            city: document.getElementById('property-city').value,
+            district: document.getElementById('property-district').value,
+            area_gross: parseFloat(document.getElementById('property-area-gross').value) || null,
+            area_net: parseFloat(document.getElementById('property-area-net').value) || null,
+            photos: this.uploadedImages,
+            published: document.getElementById('property-published').checked,
+            featured: document.getElementById('property-featured').checked,
+            status: document.getElementById('property-published').checked ? 'active' : 'draft'
+        };
+
+        const propertyId = document.getElementById('property-id').value;
+
+        let result;
+        if (propertyId) {
+            result = await SupabaseClient.updateProperty(propertyId, propertyData);
+        } else {
+            result = await SupabaseClient.createProperty(propertyData);
+        }
+
+        if (result.success) {
+            alert('İlan kaydedildi!');
+            this.closePropertyModal();
+            await this.loadProperties();
+            await this.loadDashboard();
+        } else {
+            alert('Hata: ' + result.error);
+        }
+    },
+
+    async saveBlog() {
+        const blogData = {
+            title: document.getElementById('blog-title').value,
+            category: document.getElementById('blog-category').value,
+            content: document.getElementById('blog-content').value,
+            author_name: document.getElementById('blog-author').value,
+            published: document.getElementById('blog-published').checked,
+            featured: document.getElementById('blog-featured').checked,
+            status: document.getElementById('blog-published').checked ? 'published' : 'draft'
+        };
+
+        const blogId = document.getElementById('blog-id').value;
+
+        let result;
+        if (blogId) {
+            result = await SupabaseClient.updateBlog(blogId, blogData);
+        } else {
+            result = await SupabaseClient.createBlog(blogData);
+        }
+
+        if (result.success) {
+            alert('Blog yazısı kaydedildi!');
+            this.closeBlogModal();
+            await this.loadBlogs();
+            await this.loadDashboard();
+        } else {
+            alert('Hata: ' + result.error);
+        }
+    },
+
+    async editProperty(id) {
+        const result = await SupabaseClient.fetchPropertyById(id);
+        if (!result.success) return;
+
+        const property = result.data;
+        document.getElementById('property-id').value = property.id;
+        document.getElementById('property-title').value = property.title;
+        document.getElementById('property-description').value = property.description || '';
+        document.getElementById('property-transaction').value = property.transaction_type;
+        document.getElementById('property-type').value = property.property_type;
+        document.getElementById('property-price').value = property.price;
+        document.getElementById('property-rooms').value = property.rooms || '';
+        document.getElementById('property-city').value = property.city;
+        document.getElementById('property-district').value = property.district;
+        document.getElementById('property-area-gross').value = property.area_gross || '';
+        document.getElementById('property-area-net').value = property.area_net || '';
+        document.getElementById('property-published').checked = property.published;
+        document.getElementById('property-featured').checked = property.featured;
+
+        this.uploadedImages = property.photos || [];
+        this.showPropertyModal(id);
+    },
+
+    async deleteProperty(id) {
+        if (!confirm('Bu ilanı silmek istediğinizden emin misiniz?')) return;
+
+        const result = await SupabaseClient.deleteProperty(id);
+
+        if (result.success) {
+            alert('İlan silindi');
+            await this.loadProperties();
+            await this.loadDashboard();
+        } else {
+            alert('Hata: ' + result.error);
+        }
+    },
+
+    async editBlog(id) {
+        // Similar to editProperty
+        alert('Blog düzenleme: ' + id);
+    },
+
+    async deleteBlog(id) {
+        if (!confirm('Bu blog yazısını silmek istediğinizden emin misiniz?')) return;
+
+        const result = await SupabaseClient.deleteBlog(id);
+
+        if (result.success) {
+            alert('Blog silindi');
+            await this.loadBlogs();
+            await this.loadDashboard();
+        } else {
+            alert('Hata: ' + result.error);
+        }
+    },
+
+    handleFileSelect(files) {
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.uploadedImages.push(e.target.result);
+                this.displayImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+    },
+
+    displayImagePreview(url) {
+        const container = document.getElementById('image-preview-container');
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'image-preview';
+        container.appendChild(img);
+    }
+};
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    AdminPanel.init();
+});
+</script>
+
+</body>
+</html>
