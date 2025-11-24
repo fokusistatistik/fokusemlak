@@ -12,90 +12,38 @@
   "dir": "ltr",
   "icons": [
     {
-      "src": "/assets/img/icon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icon-128x128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icon-192x192.png",
+      "src": "https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/img/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/img/icon-512x512.png",
+      "src": "https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/assets/img/screenshot1.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/assets/img/screenshot2.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
+  "screenshots": [],
   "categories": ["business", "finance", "lifestyle"],
   "shortcuts": [
     {
       "name": "Ara",
       "short_name": "Ara",
       "description": "İlan ara",
-      "url": "/listings.html",
-      "icons": [{ "src": "/assets/img/icon-search.png", "sizes": "96x96" }]
+      "url": "/listings.html"
     },
     {
       "name": "Değerle",
       "short_name": "Değerle",
       "description": "AI ile değerle",
-      "url": "/index.html#ai-tools",
-      "icons": [{ "src": "/assets/img/icon-ai.png", "sizes": "96x96" }]
+      "url": "/index.html#ai-tools"
     },
     {
       "name": "Sat",
       "short_name": "Sat",
       "description": "Mülkünü sat",
-      "url": "/sell-property.html",
-      "icons": [{ "src": "/assets/img/icon-sell.png", "sizes": "96x96" }]
+      "url": "/sell-property.html"
     }
   ],
   "share_target": {

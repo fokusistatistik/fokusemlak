@@ -278,8 +278,33 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">İçerik</label>
-                    <textarea id="blog-content" rows="8" required class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"></textarea>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-semibold text-slate-700">İçerik (HTML Destekli)</label>
+                        <div class="flex items-center gap-3">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="blog-html-mode" class="rounded">
+                                <span class="text-xs text-slate-600">HTML Modu</span>
+                            </label>
+                            <button type="button" onclick="previewBlogContent()" class="text-xs bg-slate-100 hover:bg-slate-200 px-3 py-1 rounded transition">
+                                <i class="fa-solid fa-eye mr-1"></i>Önizleme
+                            </button>
+                        </div>
+                    </div>
+                    <textarea id="blog-content" rows="12" required class="w-full px-3 sm:px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm sm:text-base font-mono" placeholder="HTML etiketleri kullanabilirsiniz: <h1>, <p>, <img>, <a>, <strong>, <em>, <ul>, <li>, vb."></textarea>
+                    <p class="text-xs text-slate-500 mt-1">💡 İpucu: Tam HTML desteği. Başlıklar için &lt;h1&gt;-&lt;h6&gt;, paragraflar için &lt;p&gt;, resimler için &lt;img&gt;, linkler için &lt;a&gt; kullanabilirsiniz.</p>
+                </div>
+
+                <!-- Preview Modal -->
+                <div id="blog-preview-modal" class="modal fixed inset-0 bg-black/50 items-center justify-center z-[60] p-4" style="display:none;">
+                    <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-slate-800">İçerik Önizleme</h3>
+                            <button onclick="document.getElementById('blog-preview-modal').style.display='none'" class="text-slate-400 hover:text-slate-600 text-2xl">
+                                <i class="fa-solid fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="blog-preview-content" class="p-6 prose prose-slate max-w-none"></div>
+                    </div>
                 </div>
 
                 <div>
@@ -508,6 +533,18 @@
 
         function closeBlogModal() {
             document.getElementById('blog-modal').classList.remove('active');
+        }
+
+        function previewBlogContent() {
+            const content = document.getElementById('blog-content').value;
+            const previewModal = document.getElementById('blog-preview-modal');
+            const previewContent = document.getElementById('blog-preview-content');
+
+            // Render HTML content
+            previewContent.innerHTML = content;
+
+            // Show modal
+            previewModal.style.display = 'flex';
         }
 
         function editBlog(id) {
