@@ -81,13 +81,39 @@
                 </div>
 
                 <div class="bg-white rounded-xl shadow border border-slate-200 p-8">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <span id="property-type-badge" class="inline-block bg-blue-900 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">SATILIK</span>
-                            <h1 id="property-title" class="text-3xl font-bold text-slate-900">İlan Başlığı</h1>
-                            <p id="property-location" class="text-slate-500 mt-2"><i class="fa-solid fa-location-dot"></i> Konum</p>
+                    <div class="mb-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span id="property-type-badge" class="inline-block bg-blue-900 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">SATILIK</span>
+                                <h1 id="property-title" class="text-3xl font-bold text-slate-900">İlan Başlığı</h1>
+                                <p id="property-location" class="text-slate-500 mt-2"><i class="fa-solid fa-location-dot"></i> Konum</p>
+                            </div>
                         </div>
-                        <button class="text-2xl text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-heart"></i></button>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-3">
+                            <button
+                                id="favorite-btn"
+                                onclick="handleFavoriteToggle()"
+                                class="flex-1 min-w-[150px] bg-white border-2 border-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl hover:border-red-500 hover:text-red-500 transition flex items-center justify-center gap-2">
+                                <i id="favorite-icon" class="fa-regular fa-heart text-xl"></i>
+                                <span id="favorite-text">Favorilere Ekle</span>
+                            </button>
+
+                            <button
+                                onclick="handleShare()"
+                                class="flex-1 min-w-[150px] bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-share-nodes text-xl"></i>
+                                <span>Paylaş</span>
+                            </button>
+
+                            <button
+                                onclick="handleAskQuestion()"
+                                class="flex-1 min-w-[150px] bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-purple-700 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-comments text-xl"></i>
+                                <span>Soru Sor</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="flex gap-6 mb-8 text-center border-t border-b py-6">
@@ -190,11 +216,240 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/assets/js/supabase-client.js"></script>
+    <script src="/assets/js/supabase-client-users.js"></script>
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/main.js"></script>
     <script>
         let currentProperty = null;
+        let isFavorited = false;
+        let currentUser = null;
+
+        // Check authentication and load favorites status
+        async function checkAuthAndFavorites() {
+            try {
+                const userResult = await SupabaseClient.getCurrentUser();
+                if (userResult.success && userResult.user.profile.approval_status === 'approved') {
+                    currentUser = userResult.user;
+                    await checkIfFavorited();
+                }
+            } catch (error) {
+                console.log('Not authenticated');
+            }
+        }
+
+        // Check if current property is favorited
+        async function checkIfFavorited() {
+            if (!currentUser || !currentProperty) return;
+
+            try {
+                const result = await SupabaseClient.getFavorites();
+                if (result.success) {
+                    const favorited = result.favorites.some(fav =>
+                        fav.property_id === currentProperty.id ||
+                        fav.property_id === currentProperty.listing_code
+                    );
+
+                    if (favorited) {
+                        updateFavoriteButton(true);
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking favorites:', error);
+            }
+        }
+
+        // Update favorite button UI
+        function updateFavoriteButton(favorited) {
+            isFavorited = favorited;
+            const btn = document.getElementById('favorite-btn');
+            const icon = document.getElementById('favorite-icon');
+            const text = document.getElementById('favorite-text');
+
+            if (favorited) {
+                btn.className = 'flex-1 min-w-[150px] bg-red-50 border-2 border-red-500 text-red-500 font-bold py-3 px-4 rounded-xl hover:bg-red-100 transition flex items-center justify-center gap-2';
+                icon.className = 'fa-solid fa-heart text-xl';
+                text.textContent = 'Favorilerimde';
+            } else {
+                btn.className = 'flex-1 min-w-[150px] bg-white border-2 border-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl hover:border-red-500 hover:text-red-500 transition flex items-center justify-center gap-2';
+                icon.className = 'fa-regular fa-heart text-xl';
+                text.textContent = 'Favorilere Ekle';
+            }
+        }
+
+        // Handle favorite toggle
+        async function handleFavoriteToggle() {
+            // Check if user is logged in
+            if (!currentUser) {
+                const result = confirm('Favorilere eklemek için giriş yapmalısınız. Giriş sayfasına gitmek ister misiniz?');
+                if (result) {
+                    window.location.href = '/login.html';
+                }
+                return;
+            }
+
+            // Check approval status
+            if (currentUser.profile.approval_status !== 'approved') {
+                showToast('Hesabınız henüz onaylanmadı', 'warning');
+                return;
+            }
+
+            if (!currentProperty) {
+                showToast('İlan bilgisi yüklenemedi', 'error');
+                return;
+            }
+
+            try {
+                const btn = document.getElementById('favorite-btn');
+                btn.disabled = true;
+
+                if (isFavorited) {
+                    // Remove from favorites
+                    const result = await SupabaseClient.removeFavorite(currentProperty.id || currentProperty.listing_code);
+                    if (result.success) {
+                        updateFavoriteButton(false);
+                        showToast('Favorilerden kaldırıldı', 'success');
+                    } else {
+                        showToast('Favorilerden kaldırılırken hata oluştu', 'error');
+                    }
+                } else {
+                    // Add to favorites
+                    const result = await SupabaseClient.addFavorite(
+                        currentProperty.id || currentProperty.listing_code,
+                        {
+                            title: currentProperty.title,
+                            price: currentProperty.price,
+                            area: currentProperty.area,
+                            rooms: currentProperty.rooms,
+                            district: currentProperty.district,
+                            city: currentProperty.city,
+                            image: currentProperty.photos && currentProperty.photos[0] ? currentProperty.photos[0] : null
+                        }
+                    );
+
+                    if (result.success) {
+                        updateFavoriteButton(true);
+                        showToast('Favorilere eklendi!', 'success');
+                    } else {
+                        showToast('Favorilere eklenirken hata oluştu', 'error');
+                    }
+                }
+
+                btn.disabled = false;
+            } catch (error) {
+                console.error('Favorite toggle error:', error);
+                showToast('Bir hata oluştu', 'error');
+                btn.disabled = false;
+            }
+        }
+
+        // Handle share
+        async function handleShare() {
+            if (!currentProperty) {
+                showToast('İlan bilgisi yüklenemedi', 'error');
+                return;
+            }
+
+            const shareData = {
+                title: currentProperty.title || 'FOKUS Emlak İlanı',
+                text: `${currentProperty.title} - ${currentProperty.price ? '₺' + new Intl.NumberFormat('tr-TR').format(currentProperty.price) : 'Fiyat bilgisi'}`,
+                url: window.location.href
+            };
+
+            try {
+                // Try native share API first (works on mobile)
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                    showToast('İlan paylaşıldı!', 'success');
+                } else {
+                    // Fallback: copy to clipboard
+                    await navigator.clipboard.writeText(window.location.href);
+                    showToast('İlan linki kopyalandı!', 'success');
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    // If share fails, copy to clipboard
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        showToast('İlan linki kopyalandı!', 'success');
+                    } catch (clipError) {
+                        console.error('Share/copy error:', clipError);
+                        showToast('Paylaşım başarısız oldu', 'error');
+                    }
+                }
+            }
+        }
+
+        // Handle ask question - opens chatbot with property context
+        async function handleAskQuestion() {
+            if (!currentProperty) {
+                showToast('İlan bilgisi yüklenemedi', 'error');
+                return;
+            }
+
+            // Check if user is logged in
+            let userId = null;
+            let userName = 'Ziyaretçi';
+
+            if (currentUser) {
+                userId = currentUser.id;
+                userName = currentUser.profile.full_name || currentUser.email;
+            }
+
+            try {
+                // Send webhook to n8n chatbot with property context
+                const webhookUrl = 'https://n8n.fokusistatistik.com/webhook/chatbot-inquiry';
+
+                const payload = {
+                    event: 'property_inquiry',
+                    property: {
+                        id: currentProperty.id,
+                        listing_code: currentProperty.listing_code,
+                        title: currentProperty.title,
+                        type: currentProperty.type,
+                        price: currentProperty.price,
+                        area: currentProperty.area,
+                        rooms: currentProperty.rooms,
+                        location: `${currentProperty.district || ''}, ${currentProperty.city || ''}`.trim(),
+                        url: window.location.href
+                    },
+                    user: {
+                        id: userId,
+                        name: userName,
+                        authenticated: !!currentUser
+                    },
+                    timestamp: new Date().toISOString()
+                };
+
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Open chatbot (assuming there's a chatbot widget or page)
+                showToast('Chatbot açılıyor... İlan bilgileri yüklendi', 'success');
+
+                // Store property context for chatbot
+                sessionStorage.setItem('chatbot_property_context', JSON.stringify(payload.property));
+
+                // Open chatbot - you can customize this based on your chatbot implementation
+                // Option 1: If chatbot is in a modal/widget
+                if (typeof window.openChatbot === 'function') {
+                    window.openChatbot(payload.property);
+                }
+                // Option 2: If chatbot is on a separate page
+                else {
+                    window.open(`/chatbot.html?property=${currentProperty.id}`, '_blank');
+                }
+
+            } catch (error) {
+                console.error('Ask question error:', error);
+                showToast('Chatbot açılırken hata oluştu', 'error');
+            }
+        }
 
         // Load property data on page load
         async function loadProperty() {
@@ -229,6 +484,7 @@
                 currentProperty = property;
                 displayProperty(property);
                 trackView(id);
+                await checkAuthAndFavorites();
 
             } catch (error) {
                 console.error('Error loading property:', error);
@@ -239,6 +495,7 @@
                 if (property) {
                     currentProperty = property;
                     displayProperty(property);
+                    await checkAuthAndFavorites();
                 } else {
                     showToast('İlan yüklenirken hata oluştu', 'error');
                     window.location.href = 'listings.html';
