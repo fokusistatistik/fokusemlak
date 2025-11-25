@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yapılıyor... | FOKUS Emlak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-slate-100">
+
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+            <!-- Loading Animation -->
+            <div class="mb-6">
+                <div class="w-20 h-20 border-4 border-blue-100 border-t-blue-900 rounded-full animate-spin mx-auto"></div>
+            </div>
+
+            <h1 class="text-2xl font-bold text-slate-900 mb-2" id="status-title">Giriş yapılıyor...</h1>
+            <p class="text-slate-600 mb-6" id="status-message">Lütfen bekleyin, hesabınız kontrol ediliyor.</p>
+
+            <!-- Progress Steps -->
+            <div class="space-y-2 text-left max-w-sm mx-auto">
+                <div class="flex items-center gap-3 text-sm" id="step-1">
+                    <i class="fa-solid fa-spinner fa-spin text-blue-600"></i>
+                    <span class="text-slate-700">Google ile kimlik doğrulama...</span>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-slate-400" id="step-2">
+                    <i class="fa-solid fa-circle-notch"></i>
+                    <span>Hesap durumu kontrol ediliyor...</span>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-slate-400" id="step-3">
+                    <i class="fa-solid fa-circle-notch"></i>
+                    <span>Yönlendiriliyor...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/supabase-client.js"></script>
+    <script src="/assets/js/supabase-client-users.js"></script>
+
+    <script>
+    (async () => {
+        try {
+            // Step 1: Get session
+            updateStep(1, 'check', 'Google ile kimlik doğrulandı');
+
+            const { data: { session }, error: sessionError } = await SupabaseClient.client.auth.getSession();
+
+            if (sessionError || !session) {
+                throw new Error('Oturum bulunamadı. Lütfen tekrar deneyin.');
+            }
+
+            // Step 2: Check user profile and approval status
+            await sleep(500);
+            updateStep(2, 'spinner', 'Hesap durumu kontrol ediliyor...');
+
+            const googleUser = session.user.user_metadata;
+            const userId = session.user.id;
+
+            // Check if profile exists
+            const { data: profile, error: profileError } = await SupabaseClient.client
+                .from('user_profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+
+            if (profileError && profileError.code === 'PGRST116') {
+                // Profile doesn't exist, this is a new user
+                // Profile will be created automatically by trigger
+                // But we need to send webhook notification
+                await sendWebhookNotification('signup', googleUser, userId);
+
+                updateStep(2, 'check', 'Yeni hesap oluşturuldu');
+                await sleep(500);
+                updateStep(3, 'spinner', 'Onay bekleniyor...');
+                await sleep(1000);
+
+                window.location.href = '/pending-approval.html';
+                return;
+            }
+
+            if (profileError) {
+                throw new Error('Profil bilgileri alınamadı');
+            }
+
+            // Check approval status
+            updateStep(2, 'check', 'Hesap bulundu');
+
+            if (profile.approval_status === 'approved') {
+                // Approved user - redirect to dashboard
+                await sendWebhookNotification('login', googleUser, userId, profile);
+
+                await sleep(500);
+                updateStep(3, 'spinner', 'Dashboard\'a yönlendiriliyor...');
+                await sleep(500);
+
+                if (profile.role === 'admin') {
+                    window.location.href = '/admin/supabase-admin.html';
+                } else {
+                    window.location.href = '/user-dashboard.html';
+                }
+
+            } else if (profile.approval_status === 'pending') {
+                // Pending approval
+                updateStep(3, 'clock', 'Onay bekleniyor...');
+                await sleep(1000);
+                window.location.href = '/pending-approval.html';
+
+            } else if (profile.approval_status === 'rejected') {
+                // Rejected
+                updateStep(3, 'times', 'Erişim reddedildi');
+                await sleep(1000);
+                window.location.href = '/access-denied.html';
+            }
+
+        } catch (error) {
+            console.error('Auth callback error:', error);
+
+            document.getElementById('status-title').textContent = 'Bir Hata Oluştu';
+            document.getElementById('status-message').textContent = error.message || 'Giriş işlemi başarısız oldu.';
+
+            updateStep(1, 'times', 'Hata oluştu');
+
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 3000);
+        }
+    })();
+
+    function updateStep(stepNum, icon, text) {
+        const step = document.getElementById(`step-${stepNum}`);
+        const iconMap = {
+            'spinner': 'fa-spinner fa-spin text-blue-600',
+            'check': 'fa-check-circle text-green-600',
+            'times': 'fa-times-circle text-red-600',
+            'clock': 'fa-clock text-amber-600'
+        };
+
+        step.classList.remove('text-slate-400');
+        step.classList.add('text-slate-900');
+
+        const iconEl = step.querySelector('i');
+        iconEl.className = `fa-solid ${iconMap[icon] || 'fa-circle-notch'}`;
+
+        const textEl = step.querySelector('span');
+        textEl.textContent = text;
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function sendWebhookNotification(action, googleUser, userId, profile = null) {
+        try {
+            const webhookUrl = 'https://n8n.fokusistatistik.com/webhook/user-auth';
+
+            await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    event: 'google_auth',
+                    action: action,
+                    google_user: {
+                        id: googleUser.sub,
+                        email: googleUser.email,
+                        name: googleUser.full_name || googleUser.name,
+                        picture: googleUser.avatar_url || googleUser.picture
+                    },
+                    supabase_user_id: userId,
+                    profile: profile,
+                    timestamp: new Date().toISOString()
+                })
+            });
+        } catch (error) {
+            console.error('Webhook notification error:', error);
+            // Don't block the flow if webhook fails
+        }
+    }
+    </script>
+
+</body>
+</html>
