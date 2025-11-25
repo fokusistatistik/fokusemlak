@@ -1,0 +1,470 @@
+{
+  "workflows": [
+    {
+      "name": "FOKUS Emlak - User Authentication Handler",
+      "description": "Handles user signup and login webhooks, sends admin notifications",
+      "nodes": [
+        {
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "user-auth",
+            "responseMode": "onReceived",
+            "options": {}
+          },
+          "name": "Webhook - User Auth",
+          "type": "n8n-nodes-base.webhook",
+          "typeVersion": 1,
+          "position": [250, 300]
+        },
+        {
+          "parameters": {
+            "conditions": {
+              "string": [
+                {
+                  "value1": "={{$json.action}}",
+                  "operation": "equals",
+                  "value2": "signup"
+                }
+              ]
+            }
+          },
+          "name": "Is Signup?",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 1,
+          "position": [450, 300]
+        },
+        {
+          "parameters": {
+            "fromEmail": "noreply@fokusemlak.com",
+            "toEmail": "admin@fokusemlak.com",
+            "subject": "🆕 Yeni Kullanıcı Kaydı - {{$json.google_user.name}}",
+            "text": "=Yeni kullanıcı kaydı yapıldı:\n\n👤 Ad: {{$json.google_user.name}}\n📧 Email: {{$json.google_user.email}}\n🕐 Kayıt Zamanı: {{$json.timestamp}}\n🆔 User ID: {{$json.supabase_user_id}}\n\nKullanıcıyı onaylamak için admin paneline gidin:\nhttps://fokusemlak.com/admin/supabase-admin.html\n\n--\nFOKUS Emlak Otomatik Bildirim Sistemi",
+            "options": {}
+          },
+          "name": "Email - New Signup",
+          "type": "n8n-nodes-base.emailSend",
+          "typeVersion": 2,
+          "position": [650, 200]
+        },
+        {
+          "parameters": {
+            "authentication": "oAuth2",
+            "select": "channel",
+            "channelId": {
+              "__rl": true,
+              "value": "general",
+              "mode": "name"
+            },
+            "text": "=🆕 *Yeni Kullanıcı Kaydı*\n\n*Ad:* {{$json.google_user.name}}\n*Email:* {{$json.google_user.email}}\n*Zaman:* {{$json.timestamp}}\n\n<https://fokusemlak.com/admin/supabase-admin.html|Admin Paneline Git>",
+            "otherOptions": {}
+          },
+          "name": "Slack - New Signup",
+          "type": "n8n-nodes-base.slack",
+          "typeVersion": 2.1,
+          "position": [650, 400]
+        },
+        {
+          "parameters": {
+            "operation": "insert",
+            "tableId": "webhook_logs",
+            "fieldsUi": {
+              "fieldValues": [
+                {
+                  "fieldId": "event_type",
+                  "fieldValue": "={{$json.event}}"
+                },
+                {
+                  "fieldId": "request_payload",
+                  "fieldValue": "={{JSON.stringify($json)}}"
+                },
+                {
+                  "fieldId": "status",
+                  "fieldValue": "success"
+                }
+              ]
+            }
+          },
+          "name": "Supabase - Log Webhook",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [850, 300]
+        },
+        {
+          "parameters": {
+            "fromEmail": "noreply@fokusemlak.com",
+            "toEmail": "={{$json.google_user.email}}",
+            "subject": "FOKUS Emlak'a Hoş Geldiniz! 🏠",
+            "text": "=Merhaba {{$json.google_user.name}},\n\nFOKUS Emlak'a kaydınız başarıyla oluşturuldu! 🎉\n\nHesabınız yönetici tarafından incelenecek ve kısa süre içinde onaylanacaktır. Onay işlemi genellikle 24 saat içinde tamamlanır.\n\nOnaylandığınızda email ile bilgilendirileceksiniz.\n\nŞu anda yapabilecekleriniz:\n✓ İlanları görüntüle\n✓ Emlak danışmanlarımızla iletişime geç\n✓ Sanal turları incele\n\nSorularınız için: info@fokusemlak.com\n\nSaygılarımızla,\nFOKUS Emlak Ekibi",
+            "options": {}
+          },
+          "name": "Email - Welcome User",
+          "type": "n8n-nodes-base.emailSend",
+          "typeVersion": 2,
+          "position": [850, 100]
+        }
+      ],
+      "connections": {
+        "Webhook - User Auth": {
+          "main": [
+            [
+              {
+                "node": "Is Signup?",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Is Signup?": {
+          "main": [
+            [
+              {
+                "node": "Email - New Signup",
+                "type": "main",
+                "index": 0
+              },
+              {
+                "node": "Slack - New Signup",
+                "type": "main",
+                "index": 0
+              },
+              {
+                "node": "Email - Welcome User",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Email - New Signup": {
+          "main": [
+            [
+              {
+                "node": "Supabase - Log Webhook",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Slack - New Signup": {
+          "main": [
+            [
+              {
+                "node": "Supabase - Log Webhook",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Email - Welcome User": {
+          "main": [
+            [
+              {
+                "node": "Supabase - Log Webhook",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "FOKUS Emlak - Chatbot Inquiry Handler",
+      "description": "Handles property inquiry webhooks and prepares chatbot context",
+      "nodes": [
+        {
+          "parameters": {
+            "httpMethod": "POST",
+            "path": "chatbot-inquiry",
+            "responseMode": "onReceived",
+            "options": {}
+          },
+          "name": "Webhook - Chatbot Inquiry",
+          "type": "n8n-nodes-base.webhook",
+          "typeVersion": 1,
+          "position": [250, 300]
+        },
+        {
+          "parameters": {
+            "functionCode": "const property = $input.item.json.property;\nconst user = $input.item.json.user;\n\nconst context = `Kullanıcı ${user.name} ${user.authenticated ? '(Kayıtlı Üye)' : '(Ziyaretçi)'}, ${property.listing_code} kodlu \"${property.title}\" ilanı hakkında soru sormak istiyor.\n\nİlan Detayları:\n- Tip: ${property.type === 'satilik' ? 'Satılık' : 'Kiralık'}\n- Fiyat: ₺${new Intl.NumberFormat('tr-TR').format(property.price)}\n- Alan: ${property.area} m²\n- Oda: ${property.rooms}\n- Konum: ${property.location}\n- Link: ${property.url}\n\nKullanıcının sorularını bu ilan özelinde yanıtlayın. Profesyonel ve yardımcı olun.`;\n\nreturn {\n  context,\n  property,\n  user,\n  timestamp: $input.item.json.timestamp\n};"
+          },
+          "name": "Prepare Chatbot Context",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [450, 300]
+        },
+        {
+          "parameters": {
+            "authentication": "oAuth2",
+            "resource": "chat",
+            "operation": "create",
+            "modelId": {
+              "__rl": true,
+              "value": "gpt-4",
+              "mode": "list"
+            },
+            "messages": {
+              "values": [
+                {
+                  "role": "system",
+                  "content": "Sen FOKUS Emlak'ın yardımcı asistanısın. Kullanıcılara emlak ilanları hakkında profesyonel ve dostça bilgi veriyorsun."
+                },
+                {
+                  "role": "user",
+                  "content": "={{$json.context}}"
+                }
+              ]
+            },
+            "options": {}
+          },
+          "name": "OpenAI - Generate Response",
+          "type": "n8n-nodes-base.openAi",
+          "typeVersion": 1,
+          "position": [650, 300]
+        },
+        {
+          "parameters": {
+            "operation": "insert",
+            "tableId": "chatbot_inquiries",
+            "fieldsUi": {
+              "fieldValues": [
+                {
+                  "fieldId": "property_id",
+                  "fieldValue": "={{$json.property.id}}"
+                },
+                {
+                  "fieldId": "user_id",
+                  "fieldValue": "={{$json.user.id}}"
+                },
+                {
+                  "fieldId": "user_authenticated",
+                  "fieldValue": "={{$json.user.authenticated}}"
+                },
+                {
+                  "fieldId": "inquiry_context",
+                  "fieldValue": "={{$json.context}}"
+                }
+              ]
+            }
+          },
+          "name": "Supabase - Log Inquiry",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [850, 300]
+        },
+        {
+          "parameters": {
+            "conditions": {
+              "boolean": [
+                {
+                  "value1": "={{!$json.user.authenticated}}",
+                  "operation": "true"
+                }
+              ]
+            }
+          },
+          "name": "Is Guest User?",
+          "type": "n8n-nodes-base.if",
+          "typeVersion": 1,
+          "position": [650, 150]
+        },
+        {
+          "parameters": {
+            "fromEmail": "noreply@fokusemlak.com",
+            "toEmail": "admin@fokusemlak.com",
+            "subject": "🔔 Yeni Anonim Soru - {{$json.property.listing_code}}",
+            "text": "=Anonim bir ziyaretçi ilan hakkında soru sordu:\n\n📋 İlan: {{$json.property.title}}\n🔢 Kod: {{$json.property.listing_code}}\n🕐 Zaman: {{$json.timestamp}}\n\nBu kullanıcı kayıt olmamış. İlgili kullanıcının kaydolması için teşvik edilebilir.\n\nİlan linki: {{$json.property.url}}",
+            "options": {}
+          },
+          "name": "Email - Guest Inquiry Alert",
+          "type": "n8n-nodes-base.emailSend",
+          "typeVersion": 2,
+          "position": [850, 150]
+        }
+      ],
+      "connections": {
+        "Webhook - Chatbot Inquiry": {
+          "main": [
+            [
+              {
+                "node": "Prepare Chatbot Context",
+                "type": "main",
+                "index": 0
+              },
+              {
+                "node": "Is Guest User?",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Prepare Chatbot Context": {
+          "main": [
+            [
+              {
+                "node": "OpenAI - Generate Response",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "OpenAI - Generate Response": {
+          "main": [
+            [
+              {
+                "node": "Supabase - Log Inquiry",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Is Guest User?": {
+          "main": [
+            [
+              {
+                "node": "Email - Guest Inquiry Alert",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "name": "FOKUS Emlak - Weekly Property Analytics",
+      "description": "Sends weekly report of most viewed properties",
+      "nodes": [
+        {
+          "parameters": {
+            "rule": {
+              "interval": [
+                {
+                  "field": "weeks",
+                  "weeksInterval": 1,
+                  "triggerAtDay": 0,
+                  "triggerAtHour": 9,
+                  "triggerAtMinute": 0
+                }
+              ]
+            }
+          },
+          "name": "Schedule - Every Sunday 9AM",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "typeVersion": 1.1,
+          "position": [250, 300]
+        },
+        {
+          "parameters": {
+            "operation": "executeQuery",
+            "query": "SELECT \n  property_id,\n  COUNT(*) as view_count\nFROM property_views\nWHERE created_at > NOW() - INTERVAL '7 days'\nGROUP BY property_id\nORDER BY view_count DESC\nLIMIT 10"
+          },
+          "name": "Supabase - Get Top Views",
+          "type": "n8n-nodes-base.supabase",
+          "typeVersion": 1,
+          "position": [450, 300]
+        },
+        {
+          "parameters": {
+            "functionCode": "const items = $input.all();\n\nlet reportHtml = '<h2>📊 Haftalık En Çok Görüntülenen İlanlar</h2>';\nreportHtml += '<p>Son 7 günün en popüler 10 ilanı:</p>';\nreportHtml += '<table border=\"1\" cellpadding=\"10\" style=\"border-collapse: collapse;\">';\nreportHtml += '<tr><th>Sıra</th><th>İlan ID</th><th>Görüntülenme</th></tr>';\n\nitems.forEach((item, index) => {\n  reportHtml += `<tr>`;\n  reportHtml += `<td>${index + 1}</td>`;\n  reportHtml += `<td>${item.json.property_id}</td>`;\n  reportHtml += `<td><b>${item.json.view_count}</b></td>`;\n  reportHtml += `</tr>`;\n});\n\nreportHtml += '</table>';\n\nconst totalViews = items.reduce((sum, item) => sum + item.json.view_count, 0);\nreportHtml += `<p><b>Toplam Görüntülenme:</b> ${totalViews}</p>`;\nreportHtml += `<p><i>Rapor Tarihi: ${new Date().toLocaleDateString('tr-TR')}</i></p>`;\n\nreturn {\n  html: reportHtml,\n  totalViews,\n  propertyCount: items.length\n};"
+          },
+          "name": "Format Report",
+          "type": "n8n-nodes-base.code",
+          "typeVersion": 2,
+          "position": [650, 300]
+        },
+        {
+          "parameters": {
+            "fromEmail": "noreply@fokusemlak.com",
+            "toEmail": "admin@fokusemlak.com",
+            "subject": "📊 Haftalık İlan Görüntüleme Raporu",
+            "emailType": "html",
+            "text": "={{$json.html}}",
+            "options": {}
+          },
+          "name": "Email - Send Report",
+          "type": "n8n-nodes-base.emailSend",
+          "typeVersion": 2,
+          "position": [850, 300]
+        }
+      ],
+      "connections": {
+        "Schedule - Every Sunday 9AM": {
+          "main": [
+            [
+              {
+                "node": "Supabase - Get Top Views",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Supabase - Get Top Views": {
+          "main": [
+            [
+              {
+                "node": "Format Report",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        },
+        "Format Report": {
+          "main": [
+            [
+              {
+                "node": "Email - Send Report",
+                "type": "main",
+                "index": 0
+              }
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "setup_instructions": {
+    "step_1": "n8n'e giriş yapın: https://n8n.fokusistatistik.com",
+    "step_2": "Her workflow için 'Import from File' seçeneğini kullanın",
+    "step_3": "Gerekli credential'ları ekleyin:",
+    "credentials": [
+      {
+        "name": "Email Account (SMTP)",
+        "fields": {
+          "user": "noreply@fokusemlak.com",
+          "password": "your_email_password",
+          "host": "smtp.your-provider.com",
+          "port": 587,
+          "ssl": false
+        }
+      },
+      {
+        "name": "Supabase",
+        "fields": {
+          "host": "your-project.supabase.co",
+          "serviceRole": "your_supabase_service_role_key"
+        }
+      },
+      {
+        "name": "Slack OAuth2",
+        "description": "Slack workspace'inize OAuth ile bağlanın"
+      },
+      {
+        "name": "OpenAI",
+        "fields": {
+          "apiKey": "your_openai_api_key"
+        }
+      }
+    ],
+    "step_4": "Webhook URL'lerini test edin",
+    "step_5": "Frontend kodlarında webhook URL'lerini güncelleyin"
+  }
+}
