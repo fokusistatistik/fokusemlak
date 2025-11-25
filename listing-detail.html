@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">İlan Detay | FOKUS Emlak</title>
 
+    <!-- SEO Meta Tags (will be updated dynamically) -->
+    <meta name="description" id="meta-description" content="FOKUS Emlak'ta satılık ve kiralık emlak ilanlarını inceleyin. Yapay zeka destekli değerleme sistemi ile güvenli alışveriş.">
+    <meta name="keywords" id="meta-keywords" content="emlak, gayrimenkul, satılık, kiralık, daire, ev">
+    <meta name="author" content="FOKUS Emlak">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+
+    <!-- Canonical URL (will be updated dynamically) -->
+    <link rel="canonical" id="canonical-url" href="https://fokusemlak.com/listing-detail.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="product">
+    <meta property="og:url" id="og-url" content="https://fokusemlak.com/listing-detail.html">
+    <meta property="og:title" id="og-title" content="İlan Detay | FOKUS Emlak">
+    <meta property="og:description" id="og-description" content="FOKUS Emlak'ta emlak ilanlarını inceleyin.">
+    <meta property="og:image" id="og-image" content="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png">
+    <meta property="og:site_name" content="FOKUS Emlak">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="product:price:amount" id="og-price" content="">
+    <meta property="product:price:currency" content="TRY">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" id="twitter-url" content="https://fokusemlak.com/listing-detail.html">
+    <meta name="twitter:title" id="twitter-title" content="İlan Detay | FOKUS Emlak">
+    <meta name="twitter:description" id="twitter-description" content="FOKUS Emlak'ta emlak ilanlarını inceleyin.">
+    <meta name="twitter:image" id="twitter-image" content="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png">
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
     <link rel="apple-touch-icon" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
@@ -18,11 +45,39 @@
     <nav class="bg-white border-b border-slate-200">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-3">
-                <img src="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png" alt="FOKUS Emlak" class="h-10 w-auto object-contain">
+                <img src="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png" alt="FOKUS Emlak Logo" class="h-10 w-auto object-contain">
             </a>
             <a href="listings.html" class="text-slate-600 hover:text-blue-900"><i class="fa-solid fa-arrow-left mr-2"></i> Tüm İlanlar</a>
         </div>
     </nav>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-slate-200">
+        <div class="container mx-auto px-4 py-3">
+            <nav aria-label="Breadcrumb" class="text-sm">
+                <ol itemscope itemtype="https://schema.org/BreadcrumbList" class="flex items-center gap-2 text-slate-600">
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a itemprop="item" href="/" class="hover:text-blue-900">
+                            <span itemprop="name">Ana Sayfa</span>
+                        </a>
+                        <meta itemprop="position" content="1" />
+                    </li>
+                    <li><i class="fa-solid fa-chevron-right text-xs"></i></li>
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <a itemprop="item" href="/listings.html" class="hover:text-blue-900">
+                            <span itemprop="name">İlanlar</span>
+                        </a>
+                        <meta itemprop="position" content="2" />
+                    </li>
+                    <li><i class="fa-solid fa-chevron-right text-xs"></i></li>
+                    <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                        <span itemprop="name" id="breadcrumb-title" class="text-blue-900 font-medium">İlan Detay</span>
+                        <meta itemprop="position" content="3" />
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
     <div id="loading" class="container mx-auto px-4 py-12 text-center">
         <i class="fa-solid fa-spinner fa-spin text-4xl text-blue-900"></i>
@@ -507,6 +562,9 @@
             document.getElementById('loading').classList.add('hidden');
             document.getElementById('property-container').classList.remove('hidden');
 
+            // Update SEO meta tags
+            updateSEOMetaTags(property);
+
             // Update page title
             document.getElementById('page-title').textContent = `${property.title} | FOKUS Emlak`;
 
@@ -605,6 +663,146 @@
             navigator.clipboard.writeText(window.location.href).then(() => {
                 showToast('Link kopyalandı!', 'success');
             });
+        }
+
+        // Update SEO meta tags dynamically
+        function updateSEOMetaTags(property) {
+            const currentUrl = window.location.href;
+            const propertyType = property.type === 'satilik' ? 'Satılık' : 'Kiralık';
+            const formattedPrice = property.price ? new Intl.NumberFormat('tr-TR').format(property.price) : '';
+            const location = `${property.district || ''}, ${property.city || ''}`.trim();
+
+            // Page Title
+            const title = `${propertyType} ${property.rooms || ''} ${property.title || 'İlan'} - ${location} | FOKUS Emlak`;
+            document.getElementById('page-title').textContent = title;
+
+            // Meta Description
+            const description = `${propertyType} ${property.rooms || ''} daire, ${property.area || ''} m², ${location}. Fiyat: ₺${formattedPrice}. ${property.description ? property.description.substring(0, 100) + '...' : 'FOKUS Emlak güvencesiyle.'}`;
+            document.getElementById('meta-description').setAttribute('content', description);
+
+            // Keywords
+            const keywords = `${propertyType.toLowerCase()}, ${property.rooms || ''}, ${property.city || ''} emlak, ${property.district || ''} emlak, ${property.area || ''} m2, ${property.propertyType || 'daire'}`;
+            document.getElementById('meta-keywords').setAttribute('content', keywords);
+
+            // Canonical URL
+            document.getElementById('canonical-url').setAttribute('href', currentUrl);
+
+            // Open Graph
+            document.getElementById('og-url').setAttribute('content', currentUrl);
+            document.getElementById('og-title').setAttribute('content', title);
+            document.getElementById('og-description').setAttribute('content', description);
+            if (property.photos && property.photos[0]) {
+                document.getElementById('og-image').setAttribute('content', property.photos[0]);
+            }
+            if (property.price) {
+                document.getElementById('og-price').setAttribute('content', property.price);
+            }
+
+            // Twitter Card
+            document.getElementById('twitter-url').setAttribute('content', currentUrl);
+            document.getElementById('twitter-title').setAttribute('content', title);
+            document.getElementById('twitter-description').setAttribute('content', description);
+            if (property.photos && property.photos[0]) {
+                document.getElementById('twitter-image').setAttribute('content', property.photos[0]);
+            }
+
+            // Breadcrumb
+            document.getElementById('breadcrumb-title').textContent = property.title || 'İlan Detay';
+
+            // Add Structured Data (JSON-LD)
+            addStructuredData(property);
+        }
+
+        // Add structured data for SEO
+        function addStructuredData(property) {
+            // Remove existing structured data if any
+            const existingScript = document.querySelector('script[type="application/ld+json"]');
+            if (existingScript) {
+                existingScript.remove();
+            }
+
+            const structuredData = {
+                "@context": "https://schema.org",
+                "@type": "Product",
+                "name": property.title || 'Emlak İlanı',
+                "description": property.description || `${property.type === 'satilik' ? 'Satılık' : 'Kiralık'} ${property.rooms || ''} emlak ilanı`,
+                "image": property.photos && property.photos.length > 0 ? property.photos : ["https://static.fokusistatistik.com/resimler/fokusemlaklogo.png"],
+                "brand": {
+                    "@type": "Organization",
+                    "name": "FOKUS Emlak"
+                },
+                "offers": {
+                    "@type": "Offer",
+                    "url": window.location.href,
+                    "priceCurrency": "TRY",
+                    "price": property.price || 0,
+                    "availability": "https://schema.org/InStock",
+                    "seller": {
+                        "@type": "Organization",
+                        "name": "FOKUS Emlak"
+                    }
+                },
+                "additionalProperty": [
+                    {
+                        "@type": "PropertyValue",
+                        "name": "Oda Sayısı",
+                        "value": property.rooms || '-'
+                    },
+                    {
+                        "@type": "PropertyValue",
+                        "name": "Alan",
+                        "value": `${property.area || '-'} m²`
+                    },
+                    {
+                        "@type": "PropertyValue",
+                        "name": "Kat",
+                        "value": property.floor || '-'
+                    },
+                    {
+                        "@type": "PropertyValue",
+                        "name": "Konum",
+                        "value": `${property.district || ''}, ${property.city || ''}`.trim()
+                    }
+                ]
+            };
+
+            // Add Real Estate Listing schema
+            const realEstateStructuredData = {
+                "@context": "https://schema.org",
+                "@type": "RealEstateListing",
+                "name": property.title || 'Emlak İlanı',
+                "description": property.description || '',
+                "url": window.location.href,
+                "price": {
+                    "@type": "PriceSpecification",
+                    "price": property.price || 0,
+                    "priceCurrency": "TRY"
+                },
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": property.district || '',
+                    "addressRegion": property.city || '',
+                    "addressCountry": "TR"
+                },
+                "floorSize": {
+                    "@type": "QuantitativeValue",
+                    "value": property.area || 0,
+                    "unitCode": "MTK"
+                },
+                "numberOfRooms": property.rooms || '',
+                "image": property.photos && property.photos.length > 0 ? property.photos : []
+            };
+
+            // Combine both schemas
+            const combinedData = {
+                "@context": "https://schema.org",
+                "@graph": [structuredData, realEstateStructuredData]
+            };
+
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.text = JSON.stringify(combinedData);
+            document.head.appendChild(script);
         }
 
         // Load property on page load
