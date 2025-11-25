@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOKUS216 - AI Asistan | FOKUS Emlak</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
+    <link rel="apple-touch-icon" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #chatbot-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        #property-context-banner {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0.5rem;
+        }
+
+        #chatbot-iframe-container {
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f8fafc;
+        }
+
+        #chatbot-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            #chatbot-header {
+                padding: 0.75rem;
+            }
+
+            #chatbot-iframe-container {
+                top: 60px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <!-- Header -->
+    <div id="chatbot-header" class="fade-in">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <img src="/assets/img/fokus216kare.svg" alt="FOKUS216" class="w-10 h-10">
+                <div>
+                    <h1 class="text-white text-lg font-bold">FOKUS216</h1>
+                    <p class="text-blue-200 text-xs">AI Emlak Asistanı</p>
+                </div>
+            </div>
+
+            <button onclick="goBack()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span class="hidden sm:inline">Geri</span>
+            </button>
+        </div>
+
+        <!-- Property Context Banner (if applicable) -->
+        <div id="property-context-banner" class="hidden">
+            <div class="flex items-start gap-2">
+                <i class="fa-solid fa-home text-blue-600 mt-1"></i>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-slate-800" id="property-title">İlan Yükleniyor...</p>
+                    <p class="text-xs text-slate-600" id="property-details"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Iframe -->
+    <div id="chatbot-iframe-container" class="fade-in">
+        <iframe id="chatbot-iframe" src="https://asistan.fokusistatistik.com/chatbot216.html"
+                title="FOKUS216 AI Asistan"
+                allow="microphone; camera; geolocation">
+        </iframe>
+    </div>
+
+    <script>
+        // Get property ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const propertyId = urlParams.get('property');
+
+        // Load property context if available
+        function loadPropertyContext() {
+            try {
+                const contextStr = sessionStorage.getItem('chatbot_property_context');
+
+                if (contextStr) {
+                    const context = JSON.parse(contextStr);
+                    displayPropertyContext(context);
+                    sendContextToIframe(context);
+                } else if (propertyId) {
+                    // Show loading state
+                    document.getElementById('property-context-banner').classList.remove('hidden');
+                    document.getElementById('property-title').textContent = `İlan #${propertyId} bilgileri yükleniyor...`;
+                }
+            } catch (error) {
+                console.error('Error loading property context:', error);
+            }
+        }
+
+        // Display property context in banner
+        function displayPropertyContext(property) {
+            const banner = document.getElementById('property-context-banner');
+            const titleEl = document.getElementById('property-title');
+            const detailsEl = document.getElementById('property-details');
+
+            if (!property) return;
+
+            banner.classList.remove('hidden');
+
+            const typeText = property.type === 'satilik' ? 'Satılık' : 'Kiralık';
+            titleEl.textContent = `${typeText} - ${property.title || 'İlan'}`;
+
+            const details = [];
+            if (property.rooms) details.push(property.rooms);
+            if (property.area) details.push(`${property.area} m²`);
+            if (property.location) details.push(property.location);
+            if (property.price) {
+                const formattedPrice = new Intl.NumberFormat('tr-TR').format(property.price);
+                details.push(`₺${formattedPrice}`);
+            }
+
+            detailsEl.textContent = details.join(' • ');
+        }
+
+        // Send context to iframe via postMessage
+        function sendContextToIframe(context) {
+            const iframe = document.getElementById('chatbot-iframe');
+
+            // Wait for iframe to load
+            iframe.addEventListener('load', function() {
+                try {
+                    iframe.contentWindow.postMessage({
+                        type: 'property_context',
+                        data: context
+                    }, 'https://asistan.fokusistatistik.com');
+                } catch (e) {
+                    console.warn('Could not send message to chatbot iframe:', e);
+                }
+            }, { once: true });
+        }
+
+        // Go back function
+        function goBack() {
+            // Check if there's a referrer
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
+                window.history.back();
+            } else {
+                // Default to listings page
+                window.location.href = '/listings.html';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPropertyContext();
+
+            // Listen for messages from chatbot iframe
+            window.addEventListener('message', function(event) {
+                // Only accept messages from trusted origin
+                if (event.origin !== 'https://asistan.fokusistatistik.com') return;
+
+                // Handle messages from chatbot
+                if (event.data && event.data.type === 'chatbot_ready') {
+                    console.log('Chatbot ready');
+
+                    // Resend context if needed
+                    const contextStr = sessionStorage.getItem('chatbot_property_context');
+                    if (contextStr) {
+                        const context = JSON.parse(contextStr);
+                        sendContextToIframe(context);
+                    }
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // ESC key to go back
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -97,7 +97,7 @@ function addChatbotWidget() {
       </style>
 
       <div id="chatbot-icon" title="Chatbot'u aç">
-        <img src="/assets/img/fokus216kare.png" alt="FOKUS216" />
+        <img src="/assets/img/fokus216kare.svg" alt="FOKUS216" />
         <div class="description">Size nasıl yardımcı olabilirim?</div>
       </div>
 
@@ -151,3 +151,45 @@ function pulseIcon() {
     }
   );
 }
+
+// Global function to open chatbot programmatically
+window.openChatbot = function(propertyContext) {
+  const icon = document.getElementById('chatbot-icon');
+  const iframeContainer = document.getElementById('iframe-container');
+  const chatbotIframe = document.getElementById('chatbot-iframe');
+
+  if (!iframeContainer || !icon) {
+    console.error('Chatbot widget not found');
+    return false;
+  }
+
+  // If property context is provided, store it
+  if (propertyContext) {
+    sessionStorage.setItem('chatbot_property_context', JSON.stringify(propertyContext));
+
+    // Try to pass context to iframe via postMessage
+    if (chatbotIframe && chatbotIframe.contentWindow) {
+      try {
+        chatbotIframe.contentWindow.postMessage({
+          type: 'property_context',
+          data: propertyContext
+        }, 'https://asistan.fokusistatistik.com');
+      } catch (e) {
+        console.warn('Could not send message to chatbot iframe:', e);
+      }
+    }
+  }
+
+  // Open the chatbot
+  iframeContainer.style.display = 'block';
+  icon.style.display = 'none';
+
+  // Trigger pulse animation
+  setTimeout(() => {
+    if (iframeContainer.style.display === 'block') {
+      pulseIcon();
+    }
+  }, 500);
+
+  return true;
+};
