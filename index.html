@@ -312,31 +312,6 @@
             </div>
 
             <!-- DECISION SUPPORT SYSTEM -->
-            <div class="max-w-5xl mx-auto mt-8">
-                <div class="flex flex-col items-center">
-                    <div class="inline-block bg-white/10 backdrop-blur border border-white/20 rounded-full px-6 py-2 text-sm mb-4 text-white font-semibold">
-                        <i class="fa-solid fa-brain text-amber-400 mr-2"></i> Karar Destek Sistemi
-                    </div>
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <button onclick="window.location.href='listings.html?filter=trending'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-green-50 hover:text-green-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
-                            <div class="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-arrow-trend-up"></i></div>
-                            En Hızlı Değerlenenler
-                        </button>
-                        <button onclick="window.location.href='listings.html?filter=roi'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-blue-50 hover:text-blue-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
-                            <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-piggy-bank"></i></div>
-                            Yüksek Kira Getirisi
-                        </button>
-                        <button onclick="window.location.href='listings.html?filter=student'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-amber-50 hover:text-amber-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
-                            <div class="w-8 h-8 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-school"></i></div>
-                            Öğrenci Dostu
-                        </button>
-                         <button onclick="window.location.href='listings.html?filter=earthquake-safe'" class="group flex items-center gap-3 px-6 py-4 bg-white/95 text-slate-800 rounded-xl text-sm font-bold hover:bg-purple-50 hover:text-purple-700 border border-white/50 shadow-lg transition transform hover:-translate-y-1">
-                            <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-shield-halved"></i></div>
-                            Deprem Riski Düşük
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -373,8 +348,23 @@
                     </div>
                 </div>
 
-                <!-- Sanal Tadilat -->
-                <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-lg text-white relative overflow-hidden">
+                <!-- Sanal Tadilat CTA (Not authenticated) -->
+                <div id="sanal-tadilat-cta" class="bg-gradient-to-br from-amber-500 to-orange-600 p-8 rounded-3xl shadow-lg text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10"><i class="fa-solid fa-paint-roller text-9xl"></i></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl mb-4">
+                            <i class="fa-solid fa-paint-roller"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Sanal Tadilat</h3>
+                        <p class="text-white/90 mb-6 text-sm">AI ile eski evlerin potansiyelini keşfedin. Tadilat öncesi ve sonrası görüntüleri karşılaştırın.</p>
+                        <button onclick="window.location.href='login.html'" class="bg-white text-amber-600 px-6 py-3 rounded-xl font-bold hover:bg-amber-50 transition shadow-lg">
+                            <i class="fa-solid fa-lock mr-2"></i> Giriş Yapın ve Deneyin
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sanal Tadilat (Authenticated only) -->
+                <div id="sanal-tadilat-section" class="hidden bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-lg text-white relative overflow-hidden" data-auth-required="true">
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-6">
                             <div>
@@ -402,16 +392,12 @@
         </div>
     </section>
 
-    <!-- DATA CENTER SECTION -->
-    <section id="data-center" class="py-24 bg-slate-50 border-y border-slate-200">
+    <!-- DATA CENTER & SUCCESS STORIES SECTION - Combined for better space utilization -->
+    <section id="data-center" class="py-16 md:py-24 bg-slate-50 border-y border-slate-200">
         <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4">Veri Merkezi & Analiz</h2>
-                <p class="text-slate-500">Kocaeli ve Samsun piyasasının nabzını tutun.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-blue-900 text-white rounded-2xl shadow-md p-8 flex flex-col justify-center hover-lift">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                <!-- Otomatik Pazar Raporu -->
+                <div class="bg-blue-900 text-white rounded-2xl shadow-md p-6 md:p-8 flex flex-col justify-center hover-lift">
                     <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-6">
                         <i class="fa-solid fa-envelope-open-text text-2xl"></i>
                     </div>
@@ -426,16 +412,10 @@
                         <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-blue-900 font-bold py-3 rounded-lg transition btn-secondary">Abone Ol</button>
                     </form>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- SUCCESS STORIES -->
-    <section class="py-24 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Mutlu Müşteriler -->
                 <div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Mutlu Müşteriler, <br>Güvenli Tapular.</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4 md:mb-6">Mutlu Müşteriler, <br>Güvenli Tapular.</h2>
                     <p class="text-slate-600 mb-8">Son 30 günde FOKUS teknolojisi ile sonuçlanan işlemlerden bazıları.</p>
 
                     <div class="space-y-4">
@@ -507,17 +487,22 @@
     <!-- LISTINGS SECTION -->
     <section id="listings" class="py-24 bg-slate-50 overflow-hidden">
         <div class="container mx-auto px-4">
-            <div class="flex justify-between items-end mb-10">
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Vitrin</h2>
-                    <p class="text-slate-500">Portföyümüzden seçmeler.</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="scrollListings('left')" class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-blue-900 hover:text-white transition bg-white"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button onclick="scrollListings('right')" class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-blue-900 hover:text-white transition bg-white"><i class="fa-solid fa-arrow-right"></i></button>
-                </div>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Vitrin</h2>
+                <p class="text-slate-500">Portföyümüzden seçmeler.</p>
             </div>
-            <div id="listing-container" class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x p-2">
+            <div class="relative">
+                <!-- Left Scroll Button -->
+                <button onclick="scrollListings('left')" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
+                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                </button>
+
+                <!-- Right Scroll Button -->
+                <button onclick="scrollListings('right')" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -mr-6">
+                    <i class="fa-solid fa-chevron-right text-xl"></i>
+                </button>
+
+                <div id="listing-container" class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x p-2">
                 <!-- Property Card 1 -->
                 <div class="min-w-[300px] md:min-w-[350px] bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 group cursor-pointer snap-start border border-slate-100 property-card">
                     <div class="relative overflow-hidden h-60 rounded-t-2xl">
@@ -690,18 +675,23 @@
     <!-- BLOG SECTION -->
     <section id="blog" class="py-24 bg-white">
         <div class="container mx-auto px-4">
-            <div class="flex justify-between items-end mb-10">
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-2">Güncel Haberler & Analizler</h2>
-                    <p class="text-slate-500">Emlak piyasasındaki son gelişmeler, Kocaeli ve Samsun bölge raporları ve yatırım tavsiyeleri.</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="scrollNews('left')" class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-blue-900 hover:text-white transition bg-white"><i class="fa-solid fa-arrow-left"></i></button>
-                    <button onclick="scrollNews('right')" class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center hover:bg-blue-900 hover:text-white transition bg-white"><i class="fa-solid fa-arrow-right"></i></button>
-                </div>
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-slate-900 mb-2">Güncel Haberler & Analizler</h2>
+                <p class="text-slate-500">Emlak piyasasındaki son gelişmeler, Kocaeli ve Samsun bölge raporları ve yatırım tavsiyeleri.</p>
             </div>
 
-            <div id="news-container" class="flex gap-8 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x">
+            <div class="relative">
+                <!-- Left Scroll Button -->
+                <button onclick="scrollNews('left')" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
+                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                </button>
+
+                <!-- Right Scroll Button -->
+                <button onclick="scrollNews('right')" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -mr-6">
+                    <i class="fa-solid fa-chevron-right text-xl"></i>
+                </button>
+
+                <div id="news-container" class="flex gap-8 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x">
                 <article class="min-w-[320px] md:min-w-[380px] bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl transition duration-300 group hover-lift snap-start flex-shrink-0">
                     <div class="relative h-48 overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover">
@@ -983,7 +973,7 @@
         }
 
         // ===========================
-        // AUTH CONTROL - Yol Arkadaşım
+        // AUTH CONTROL - Yol Arkadaşım & Sanal Tadilat
         // ===========================
         document.addEventListener('DOMContentLoaded', function() {
             // Check if user is authenticated
@@ -993,10 +983,21 @@
                         const { data: session } = await SupabaseClient.getSession();
 
                         if (session && session.session) {
-                            // User is authenticated, show Yol Arkadaşım
+                            // User is authenticated, show auth-required sections
                             const yolArkadasimSection = document.getElementById('yol-arkadasim-section');
+                            const sanalTadilatSection = document.getElementById('sanal-tadilat-section');
+                            const sanalTadilatCTA = document.getElementById('sanal-tadilat-cta');
+
                             if (yolArkadasimSection) {
                                 yolArkadasimSection.classList.remove('hidden');
+                            }
+
+                            if (sanalTadilatSection) {
+                                sanalTadilatSection.classList.remove('hidden');
+                            }
+
+                            if (sanalTadilatCTA) {
+                                sanalTadilatCTA.classList.add('hidden');
                             }
                         }
                     }
