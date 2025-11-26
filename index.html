@@ -119,12 +119,12 @@
     }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen relative pt-8">
+<body class="bg-slate-50 text-slate-800 antialiased flex flex-col min-h-screen relative pt-[120px]">
 
     <!-- MARKET TICKER -->
-    <div class="fixed top-0 w-full z-[60] bg-slate-900 text-white text-xs py-2 border-b border-slate-700">
+    <div class="fixed top-0 w-full z-[90] bg-slate-900 text-white text-xs py-2 border-b border-slate-700">
         <div class="container mx-auto flex items-center">
-            <div class="font-bold bg-amber-500 text-slate-900 px-3 py-0.5 rounded mr-4 z-10 text-[10px] md:text-xs shrink-0">CANLI PİYASA</div>
+            <div class="font-bold bg-amber-500 text-slate-900 px-3 py-0.5 rounded mr-4 text-[10px] md:text-xs shrink-0">CANLI PİYASA</div>
             <div class="ticker-wrap w-full">
                 <div class="ticker-content space-x-8">
                     <span><i class="fa-solid fa-arrow-up text-green-400"></i> Kocaeli Ort. m²: 28.500 TL (%1.2)</span>
@@ -140,10 +140,10 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-24 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+    <div id="toast-container" class="fixed top-24 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- NAVBAR -->
-    <nav class="fixed w-full z-50 transition-all duration-300 glass-effect border-b border-gray-200 mt-0" id="navbar">
+    <nav class="fixed top-10 w-full z-[80] transition-all duration-300 glass-effect border-b border-gray-200" id="navbar">
         <div class="container mx-auto px-4 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <a href="index.html" class="flex items-center gap-3 cursor-pointer group">
@@ -188,7 +188,7 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden lg:hidden fixed inset-0 bg-white z-40 pt-24 px-6">
+        <div id="mobile-menu" class="hidden lg:hidden fixed inset-0 bg-white z-[85] pt-24 px-6">
             <div class="flex flex-col gap-6 text-center text-lg font-medium text-slate-800">
                 <a href="index.html" onclick="toggleMobileMenu()" class="border-b pb-2">Anasayfa</a>
                 <a href="#ai-tools" onclick="toggleMobileMenu()" class="border-b pb-2 text-blue-600">Evim Ne Kadar Eder?</a>
@@ -206,11 +206,11 @@
     <!-- HERO SECTION -->
     <section id="home" class="relative min-h-[900px] hero-gradient flex flex-col items-center justify-center pt-24 pb-12">
         <div class="container mx-auto px-4 text-center text-white relative z-10">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-2xl fade-in">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-2xl fade-in" style="text-shadow: 0 4px 12px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6);">
                 Yeni Nesil <br>
                 <span class="text-amber-500">Emlak Danışmanlığı.</span>
             </h1>
-            <p class="text-lg md:text-xl text-slate-200 mb-10 max-w-2xl mx-auto drop-shadow-md">
+            <p class="text-lg md:text-xl text-white font-medium mb-10 max-w-2xl mx-auto" style="text-shadow: 0 3px 8px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,0.7);">
                 Yapay zeka destekli analizlerle en doğru gayrimenkulü sizin için buluyoruz.
             </p>
 
