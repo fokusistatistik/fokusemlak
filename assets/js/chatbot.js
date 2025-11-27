@@ -15,28 +15,41 @@ function addChatbotWidget() {
       <style>
         #chatbot-icon {
           border-radius: 12px;
-          padding: 5px;
-          width: 70px;
+          padding: 8px;
+          width: 75px;
           text-align: center;
-          background: rgb(214, 214, 214);
+          background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
           cursor: pointer;
-          box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-          transition: transform 0.3s ease;
+          box-shadow: 0 8px 16px rgba(30, 58, 138, 0.4), 0 4px 8px rgba(0,0,0,0.2);
+          transition: all 0.3s ease;
+          animation: pulse-soft 3s ease-in-out infinite;
         }
         #chatbot-icon:hover {
-          transform: scale(1.25);
+          transform: scale(1.15);
+          box-shadow: 0 12px 24px rgba(30, 58, 138, 0.5), 0 6px 12px rgba(0,0,0,0.3);
+        }
+        @keyframes pulse-soft {
+          0%, 100% {
+            box-shadow: 0 8px 16px rgba(30, 58, 138, 0.4), 0 4px 8px rgba(0,0,0,0.2);
+          }
+          50% {
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.6), 0 4px 10px rgba(0,0,0,0.25);
+          }
         }
         #chatbot-icon img {
-          width: 45px;
-          height: 45px;
+          width: 48px;
+          height: 48px;
           display: block;
           margin: 0 auto;
+          filter: brightness(1.1);
         }
         #chatbot-icon .description {
-          font-size: 10px;
-          color: #666;
-          margin-top: 3px;
+          font-size: 9px;
+          color: white;
+          font-weight: 600;
+          margin-top: 4px;
           text-transform: capitalize;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         #iframe-container {
           position: relative;
