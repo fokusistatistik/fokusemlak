@@ -17,6 +17,22 @@
 
     <title>FOKUS Emlak - Kocaeli & Samsun AI Destekli Emlak | Satılık Kiralık İlan</title>
 
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="geolocation=(self), microphone=(), camera=()">
+
+    <!-- Performance Optimization - DNS Prefetch & Preconnect -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://static.fokusistatistik.com" crossorigin>
+    <link rel="dns-prefetch" href="https://accounts.google.com">
+    <link rel="dns-prefetch" href="https://asistan.fokusistatistik.com">
+
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
     <link rel="apple-touch-icon" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
@@ -479,7 +495,7 @@
 
                     <div class="space-y-4">
                         <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition hover-lift">
-                            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="w-16 h-16 rounded-lg object-cover">
+                            <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="İzmit Merkez satılık daire" class="w-16 h-16 rounded-lg object-cover">
                             <div>
                                 <h4 class="font-bold text-slate-800">İzmit Merkez 3+1 Daire</h4>
                                 <p class="text-xs text-slate-500">Satış Süresi: <span class="text-green-600 font-bold">14 Gün</span> | Değer: 3.8M ₺</p>
@@ -487,7 +503,7 @@
                             <div class="ml-auto text-green-500"><i class="fa-solid fa-circle-check text-2xl"></i></div>
                         </div>
                         <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 hover:shadow-md transition hover-lift">
-                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" class="w-16 h-16 rounded-lg object-cover">
+                            <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" alt="Atakum kiralık daire" class="w-16 h-16 rounded-lg object-cover">
                             <div>
                                 <h4 class="font-bold text-slate-800">Atakum Full Eşyalı 1+1</h4>
                                 <p class="text-xs text-slate-500">Kiralanma: <span class="text-green-600 font-bold">3 Gün</span> | Kira: 15.000 ₺</p>
@@ -552,13 +568,13 @@
             </div>
             <div class="relative">
                 <!-- Left Scroll Button -->
-                <button onclick="scrollListings('left')" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
-                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                <button onclick="scrollListings('left')" aria-label="Önceki ilanlar" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
+                    <i class="fa-solid fa-chevron-left text-xl" aria-hidden="true"></i>
                 </button>
 
                 <!-- Right Scroll Button -->
-                <button onclick="scrollListings('right')" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -mr-6">
-                    <i class="fa-solid fa-chevron-right text-xl"></i>
+                <button onclick="scrollListings('right')" aria-label="Sonraki ilanlar" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
+                    <i class="fa-solid fa-chevron-right text-xl" aria-hidden="true"></i>
                 </button>
 
                 <div id="listing-container" class="flex gap-6 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x p-2">
@@ -741,16 +757,16 @@
 
             <div class="relative">
                 <!-- Left Scroll Button -->
-                <button onclick="scrollNews('left')" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
-                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                <button onclick="scrollNews('left')" aria-label="Önceki haberler" class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -ml-6">
+                    <i class="fa-solid fa-chevron-left text-xl" aria-hidden="true"></i>
                 </button>
 
                 <!-- Right Scroll Button -->
-                <button onclick="scrollNews('right')" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -mr-6">
-                    <i class="fa-solid fa-chevron-right text-xl"></i>
+                <button onclick="scrollNews('right')" aria-label="Sonraki haberler" class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white border-2 border-slate-300 items-center justify-center hover:bg-blue-900 hover:text-white hover:border-blue-900 transition shadow-lg -mr-6">
+                    <i class="fa-solid fa-chevron-right text-xl" aria-hidden="true"></i>
                 </button>
 
-                <div id="news-container" class="flex gap-8 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x">
+                <div id="news-container" class="flex gap-8 overflow-x-auto no-scrollbar scroll-smooth pb-10 snap-x" role="region" aria-label="Güncel haberler ve analizler">
                 <article class="min-w-[320px] md:min-w-[380px] bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 hover:shadow-xl transition duration-300 group hover-lift snap-start flex-shrink-0">
                     <div class="relative h-48 overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Blog" class="w-full h-full object-cover">
