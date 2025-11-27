@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FOKUS Emlak - Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı.">
-    <meta name="keywords" content="emlak, gayrimenkul, Kocaeli, Samsun, yapay zeka, AI değerleme, konut kredisi, mortgage hesaplama">
+    <meta name="description" content="FOKUS Emlak - Kocaeli ve Samsun'da yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı. İzmit, Gebze, Atakum, İlkadım'da satılık ve kiralık ev ilanları. AI ile ücretsiz ev değerleme.">
+    <meta name="keywords" content="emlak Kocaeli, emlak Samsun, satılık daire İzmit, kiralık ev Gebze, emlak İzmit, gayrimenkul Atakum, ev değerleme, AI emlak değerleme, yapay zeka emlak, sanal tadilat, mortgage hesaplama, konut kredisi hesaplama, emlak danışmanı Kocaeli, emlak ofisi Samsun, İlkadım emlak">
     <meta name="author" content="FOKUS Emlak">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
 
-    <title>FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı</title>
+    <!-- Geo Tags for Local SEO -->
+    <meta name="geo.region" content="TR-41">
+    <meta name="geo.placename" content="Kocaeli, İzmit">
+    <meta name="geo.position" content="40.7654;29.9408">
+    <meta name="ICBM" content="40.7654, 29.9408">
+
+    <title>FOKUS Emlak - Kocaeli & Samsun AI Destekli Emlak | Satılık Kiralık İlan</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://static.fokusistatistik.com/resimler/fokusemlakfavicon.png">
@@ -16,16 +24,22 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://fokusemlak.com/">
-    <meta property="og:title" content="FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı">
-    <meta property="og:description" content="Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı. Kocaeli ve Samsun'da profesyonel hizmet.">
+    <meta property="og:title" content="FOKUS Emlak - Kocaeli & Samsun AI Destekli Emlak">
+    <meta property="og:description" content="Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı. İzmit, Gebze, Atakum, İlkadım'da satılık ve kiralık ev ilanları. AI ile ücretsiz ev değerleme.">
     <meta property="og:image" content="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:site_name" content="FOKUS Emlak">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://fokusemlak.com/">
-    <meta property="twitter:title" content="FOKUS Emlak | Yeni Nesil Emlak Danışmanlığı">
-    <meta property="twitter:description" content="Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı.">
+    <meta property="twitter:title" content="FOKUS Emlak - Kocaeli & Samsun AI Destekli Emlak">
+    <meta property="twitter:description" content="Yapay zeka destekli emlak değerleme, sanal tadilat ve veri odaklı gayrimenkul danışmanlığı. İzmit, Gebze, Atakum'da satılık ve kiralık ev ilanları.">
     <meta property="twitter:image" content="https://static.fokusistatistik.com/resimler/fokusemlaklogo.png">
+    <meta property="twitter:site" content="@fokusemlak">
+    <meta property="twitter:creator" content="@fokusemlak">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://fokusemlak.com/">
@@ -116,6 +130,51 @@
             },
             "query-input": "required name=search_term_string"
         }
+    }
+    </script>
+
+    <!-- Structured Data - Service Schema (AI Valuation) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "serviceType": "AI Destekli Emlak Değerleme",
+        "provider": {
+            "@type": "RealEstateAgent",
+            "name": "FOKUS Emlak"
+        },
+        "areaServed": [
+            {
+                "@type": "City",
+                "name": "Kocaeli"
+            },
+            {
+                "@type": "City",
+                "name": "Samsun"
+            }
+        ],
+        "description": "Yapay zeka destekli ücretsiz emlak değerleme hizmeti. Kocaeli ve Samsun bölgelerinde konut, ticari ve arsa değerleme.",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "TRY"
+        }
+    }
+    </script>
+
+    <!-- Structured Data - BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Anasayfa",
+                "item": "https://fokusemlak.com/"
+            }
+        ]
     }
     </script>
 </head>
